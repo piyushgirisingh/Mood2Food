@@ -19,9 +19,10 @@ We use NLP + ML to detect patterns of emotional eating and provide actionable fe
 - **Database:** Firebase / MongoDB
 - **Visualization:** Chart.js / D3.js
 
-## 👥 Team Members
+## 🧠 Core Features
 
-- Piyush Singh (Team Lead)
-- [Add other names + GitHub usernames here]
+- Quick mood + food logging
+- Emotion classifier for hunger reasoning
+- Insights and visualizations
+- Personalized coping tips
 
-## 📁 Project Structure
