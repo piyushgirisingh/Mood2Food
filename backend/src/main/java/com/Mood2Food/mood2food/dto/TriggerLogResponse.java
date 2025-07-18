@@ -10,4 +10,6 @@ public record TriggerLogResponse(
     String situation,
     int intensity,
     LocalDateTime timestamp
-) {}
+){
+    
+}
