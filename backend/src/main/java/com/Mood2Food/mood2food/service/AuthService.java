@@ -4,35 +4,34 @@ import com.Mood2Food.mood2food.dto.AuthResponse;
 import com.Mood2Food.mood2food.dto.LoginRequest;
 import com.Mood2Food.mood2food.dto.SignupRequest;
 import com.Mood2Food.mood2food.entity.Student;
+import com.Mood2Food.mood2food.exception.AuthException;
 import com.Mood2Food.mood2food.repository.StudentRepository;
 import com.Mood2Food.mood2food.util.JwtUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
-
 @Service
 public class AuthService {
 
-    private final StudentRepository studentRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtUtil jwtUtil;
-    private final AuthenticationManager authenticationManager;
+    @Autowired
+    private StudentRepository studentRepository;
 
-    public AuthService(StudentRepository studentRepository, PasswordEncoder passwordEncoder,
-            JwtUtil jwtUtil, AuthenticationManager authenticationManager) {
-        this.studentRepository = studentRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtUtil = jwtUtil;
-        this.authenticationManager = authenticationManager;
-    }
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
     public AuthResponse signup(SignupRequest request) {
         if (studentRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email already exists");
+            throw new AuthException("Email already exists");
         }
 
         Student student = new Student();
@@ -47,11 +46,11 @@ public class AuthService {
     }
 
     public AuthResponse login(LoginRequest request) {
-        Authentication authentication = authenticationManager.authenticate(
+        authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
         Student student = studentRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new AuthException("User not found"));
 
         String token = jwtUtil.generateToken(student.getId(), student.getEmail());
 
