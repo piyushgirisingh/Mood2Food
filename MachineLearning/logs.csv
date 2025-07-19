@@ -1,0 +1,8 @@
+timestamp,text,emotion,confidence
+2025-07-19T14:01:41.209621,I ate cookies because I felt anxious after school,fear,0.9935271739959716
+2025-07-19T14:07:15.209671,I ate cookies because I was feeling bored and stressed,sadness,0.9254244565963744
+2025-07-19T14:10:23.774926,I ate cookies because I was feeling bored and stressed,sadness,92.54244565963744
+2025-07-19T14:10:25.830677,I ate cookies because I was feeling bored and stressed,sadness,92.54244565963744
+2025-07-19T14:10:27.828898,I ate cookies because I was feeling bored and stressed,sadness,92.54244565963744
+2025-07-19T14:10:28.768142,I ate cookies because I was feeling bored and stressed,sadness,92.54244565963744
+2025-07-19T14:10:54.793061,I ate cookies because I was feeling bored and stressed,sadness,92.54244565963745
