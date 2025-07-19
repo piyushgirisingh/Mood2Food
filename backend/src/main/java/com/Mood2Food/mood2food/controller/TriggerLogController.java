@@ -8,6 +8,9 @@ import com.Mood2Food.mood2food.dto.TriggerLogResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api/logs")
 public class TriggerLogController {
