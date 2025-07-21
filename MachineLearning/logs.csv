@@ -5,4 +5,10 @@ timestamp,text,emotion,confidence
 2025-07-19T14:10:25.830677,I ate cookies because I was feeling bored and stressed,sadness,92.54244565963744
 2025-07-19T14:10:27.828898,I ate cookies because I was feeling bored and stressed,sadness,92.54244565963744
 2025-07-19T14:10:28.768142,I ate cookies because I was feeling bored and stressed,sadness,92.54244565963744
-2025-07-19T14:10:54.793061,I ate cookies because I was feeling bored and stressed,sadness,92.54244565963745
+2025-07-19T14:10:54.793061,I ate cookies because I was feeling bored and stressed,sadness,92.54244565963744
+2025-07-20T10:11:30.617313,I ate cookies because I felt anxious after school,fear,99.35271739959715
+2025-07-20T10:12:18.413008,I ate cookies because I felt sad after school,sadness,98.70442748069765
+2025-07-20T10:12:31.510194,I ate cookies because I felt happy after school,joy,99.39160943031312
+2025-07-20T10:29:19.402935,I ate chips because I was feeling anxious and overwhelmed,fear,97.92648553848268
+2025-07-20T17:05:30.957446,I ate chips because I was feeling anxious and overwhelmed,fear,97.92648553848268
+2025-07-21T14:59:32.113470,I ate cookies because I felt anxious,fear,99.3229627609253
