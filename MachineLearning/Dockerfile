@@ -13,5 +13,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 #expose port
 EXPOSE 10000
 
-# Set default command to run your script
-CMD ["python", "app.py"]
+CMD ["flask", "run", "--host=0.0.0.0", "--port=10000"]
