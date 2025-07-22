@@ -12,3 +12,22 @@ timestamp,text,emotion,confidence
 2025-07-20T10:29:19.402935,I ate chips because I was feeling anxious and overwhelmed,fear,97.92648553848268
 2025-07-20T17:05:30.957446,I ate chips because I was feeling anxious and overwhelmed,fear,97.92648553848268
 2025-07-21T14:59:32.113470,I ate cookies because I felt anxious,fear,99.3229627609253
+2025-07-21T15:15:20.879212,I ate chips because I was hungry after work,disgust,45.695698261260986
+2025-07-21T15:16:30.117215,I ate chips because I was stressed after work,anger,88.85341286659241
+2025-07-21T15:17:23.914770,I ate chips because I was feeling stressed after work,anger,96.70321941375732
+2025-07-21T15:17:51.408495,I ate chips because I was feeling anxious after work,fear,99.44223761558531
+2025-07-21T15:18:11.528431,I ate chips because I was feeling bored after work,sadness,94.92860436439514
+2025-07-21T15:18:32.126248,I ate chips because I was stressed after work,anger,88.85341286659241
+2025-07-21T15:20:23.517164,I ate chips because I was tired and alone after work,sadness,97.61036038398744
+2025-07-21T15:21:08.042924,I ate chips because I was so mad at my boss after work,anger,87.82598972320557
+2025-07-21T15:21:55.698975,I celebrated with piza after a good day,joy,97.91523814201356
+2025-07-21T15:22:24.940177,I ate because I was really stressed before my exam,anger,69.79358792304993
+2025-07-21T15:35:32.160400,I ate because I was really stressed before my exam,anger,69.79358792304993
+2025-07-21T15:35:36.976083,I ate because I was really stressed before my exam,anger,69.79358792304993
+2025-07-21T15:35:37.923842,I ate because I was really stressed before my exam,anger,69.79358792304993
+2025-07-21T15:35:39.077525,I ate because I was really stressed before my exam,anger,69.79358792304993
+2025-07-21T15:35:41.054873,I ate because I was really stressed before my exam,anger,69.79358792304993
+2025-07-21T15:35:42.912780,I ate because I was really stressed before my exam,anger,69.79358792304993
+2025-07-21T15:35:44.635976,I ate because I was really stressed before my exam,anger,69.79358792304993
+2025-07-21T15:35:46.388105,I ate because I was really stressed before my exam,anger,69.79358792304993
+2025-07-21T15:35:48.111788,I ate because I was really stressed before my exam,anger,69.79358792304993
