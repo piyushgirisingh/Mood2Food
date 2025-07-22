@@ -26,3 +26,12 @@ We use NLP + ML to detect patterns of emotional eating and provide actionable fe
 - Insights and visualizations
 - Personalized coping tips
 
+### 🧪 Postman Collection
+Import the Postman collection to test all AI/ML endpoints.
+
+- [Download Collection](./postman/Mood2Food.postman_collection.json)
+
+To import:
+1. Open Postman
+2. Click "Import"
+3. Choose this `.json` file
