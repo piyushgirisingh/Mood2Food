@@ -3,8 +3,10 @@ options:
 
 steps:
   - name: 'gcr.io/cloud-builders/docker'
+    dir: 'MachineLearning'
     args: ['build', '-t', 'gcr.io/$PROJECT_ID/mood2food-image', '.']
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'gcr.io/$PROJECT_ID/mood2food-image']
+
 images:
   - 'gcr.io/$PROJECT_ID/mood2food-image'
