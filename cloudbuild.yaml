@@ -1,5 +1,10 @@
+options:
+  logging: CLOUD_LOGGING_ONLY
+
 steps:
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/$PROJECT_ID/mood2food', '-f', 'MachineLearning/Dockerfile', '.']
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/mood2food-image', '.']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/mood2food-image']
 images:
-  - 'gcr.io/$PROJECT_ID/mood2food'
+  - 'gcr.io/$PROJECT_ID/mood2food-image'
