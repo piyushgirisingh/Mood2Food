@@ -20,6 +20,7 @@ limiter = Limiter(
 
 # Log file path
 LOG_FILE = "logs.csv"
+FEEDBACK_CSV_PATH = "feedback_logs.csv"
 
 # Create logs.csv if it doesn't exist
 if not os.path.exists(LOG_FILE):
@@ -29,10 +30,12 @@ if not os.path.exists(LOG_FILE):
 # Setup error log file
 logging.basicConfig(filename="error.log", level=logging.ERROR)
 
+
 @app.errorhandler(Exception)
 def handle_exception(e):
     app.logger.error(f"Unhandled Exception: {str(e)}", exc_info=True)
     return jsonify({"error": "Internal server error"}), 500
+
 
 @app.route("/")
 def home():
@@ -84,13 +87,15 @@ def get_patterns():
 
         # Convert timestamp to datetime and filter for last 7 days
         df["timestamp"] = pd.to_datetime(df["timestamp"])
-        last_7_days = df[df["timestamp"] >= pd.Timestamp.now() - pd.Timedelta(days=7)]
+        last_7_days = df[df["timestamp"] >=
+                         pd.Timestamp.now() - pd.Timedelta(days=7)]
 
         if last_7_days.empty:
             return jsonify({"message": "No logs from the last 7 days."})
 
         # Extract hour and day
-        last_7_days["hour"] = last_7_days["timestamp"].dt.strftime("%I %p")  # 12-hour format
+        last_7_days["hour"] = last_7_days["timestamp"].dt.strftime(
+            "%I %p")  # 12-hour format
         last_7_days["day_of_week"] = last_7_days["timestamp"].dt.day_name()
 
         # Most common emotion, hour, and day
@@ -110,7 +115,8 @@ def get_patterns():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
+
+
 @app.route("/logs/summary", methods=["GET"])
 def summary():
     try:
@@ -125,7 +131,8 @@ def summary():
         recent_df = df[df["timestamp"] >= week_ago]
 
         # Most frequent emotion this week
-        most_common_emotion = recent_df["emotion"].mode().iloc[0] if not recent_df.empty else None
+        most_common_emotion = recent_df["emotion"].mode(
+        ).iloc[0] if not recent_df.empty else None
 
         # Weekly log count
         weekly_log_count = len(recent_df)
@@ -146,7 +153,8 @@ def summary():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
+
+
 @app.route("/feedback", methods=["POST"])
 @limiter.limit("5 per minute")
 def feedback():
@@ -160,10 +168,11 @@ def feedback():
         user_comment = data.get("user_comment", "")
 
         # Load existing or create new DataFrame
-        if os.path.exists("feedback_logs.csv"):
-            df = pd.read_csv("feedback_logs.csv")
+        if os.path.exists(FEEDBACK_CSV_PATH):
+            df = pd.read_csv(FEEDBACK_CSV_PATH)
         else:
-            df = pd.DataFrame(columns=["timestamp", "original_text", "emotion", "bot_reply", "user_feedback", "user_comment"])
+            df = pd.DataFrame(columns=["timestamp", "original_text",
+                              "emotion", "bot_reply", "user_feedback", "user_comment"])
 
         # Append new feedback
         df.loc[len(df)] = [
@@ -176,17 +185,18 @@ def feedback():
         ]
 
         # Save updated DataFrame
-        df.to_csv("feedback_logs.csv", index=False)
+        df.to_csv(FEEDBACK_CSV_PATH, index=False)
 
         return jsonify({"message": "Feedback saved successfully!"})
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
+
+
 @app.route("/feedback/history", methods=["GET"])
 def get_feedback_history():
     try:
-        df = pd.read_csv("feedback_logs.csv")
+        df = pd.read_csv(FEEDBACK_CSV_PATH)
 
         # Drop rows where user_feedback is missing or empty
         df = df.dropna(subset=["user_feedback"])
@@ -204,7 +214,8 @@ def get_feedback_history():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
+
+
 @app.route("/insights", methods=["GET"])
 def generate_insights():
     try:
@@ -216,7 +227,8 @@ def generate_insights():
         # Convert timestamp to datetime and extract hour
         df["timestamp"] = pd.to_datetime(df["timestamp"])
         df["hour"] = df["timestamp"].dt.hour
-        df["period"] = df["hour"].apply(lambda x: f"{(x%12) or 12}{'AM' if x < 12 else 'PM'}")
+        df["period"] = df["hour"].apply(
+            lambda x: f"{(x % 12) or 12}{'AM' if x < 12 else 'PM'}")
 
         # Get most common emotion
         most_common_emotion = df["emotion"].mode()[0]
@@ -226,7 +238,8 @@ def generate_insights():
 
         # Emotion frequency
         emotion_counts = df["emotion"].value_counts()
-        emotion_summary = [f"{emotion}: {count} times" for emotion, count in emotion_counts.items()]
+        emotion_summary = [
+            f"{emotion}: {count} times" for emotion, count in emotion_counts.items()]
 
         # Total emotional eating logs
         total_logs = len(df)
@@ -244,10 +257,12 @@ def generate_insights():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
+
+
 @app.errorhandler(429)
 def ratelimit_handler(e):
     return jsonify(error="Too many requests, please slow down."), 429
 
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)

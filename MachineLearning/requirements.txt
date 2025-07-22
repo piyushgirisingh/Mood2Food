@@ -5,3 +5,5 @@ nltk
 flask
 transformers
 torch
+flask-limiter
+python-dotenv

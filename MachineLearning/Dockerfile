@@ -10,5 +10,8 @@ COPY . .
 # Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
+#expose port
+EXPOSE 500
+
 # Set default command to run your script
-CMD ["python", "atemp_script.py"]
+CMD ["python", "app.py"]
