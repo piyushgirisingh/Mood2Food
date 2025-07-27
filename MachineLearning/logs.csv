@@ -31,3 +31,9 @@ timestamp,text,emotion,confidence
 2025-07-21T15:35:44.635976,I ate because I was really stressed before my exam,anger,69.79358792304993
 2025-07-21T15:35:46.388105,I ate because I was really stressed before my exam,anger,69.79358792304993
 2025-07-21T15:35:48.111788,I ate because I was really stressed before my exam,anger,69.79358792304993
+2025-07-27T17:10:21.056642,I am feeling lonely,sadness,99.11215305328368
+2025-07-27T17:16:10.106235,I am feeling stressed,anger,93.39491724967957
+2025-07-27T17:19:19.242132,I am happy,joy,96.57410383224487
+2025-07-27T17:20:27.945790,test,neutral,68.89050602912903
+2025-07-27T17:25:13.060817,I am happy,joy,96.57410383224487
+2025-07-27T17:25:55.605464,Hey I am really anxious. I feel like dying. ,fear,98.36523532867432

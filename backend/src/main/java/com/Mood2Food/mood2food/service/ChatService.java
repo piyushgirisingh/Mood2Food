@@ -21,7 +21,7 @@ public class ChatService {
 
     private static final Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
 
-    @Value("${ml.backend.url:http://localhost:5000/classify-emotion}")
+    @Value("${ml.backend.url:http://localhost:10000/classify-emotion}")
     private String mlApiUrl;
 
     private final RestTemplate restTemplate = new RestTemplate();
