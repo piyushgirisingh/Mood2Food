@@ -37,3 +37,74 @@ timestamp,text,emotion,confidence
 2025-07-27T17:20:27.945790,test,neutral,68.89050602912903
 2025-07-27T17:25:13.060817,I am happy,joy,96.57410383224487
 2025-07-27T17:25:55.605464,Hey I am really anxious. I feel like dying. ,fear,98.36523532867432
+2025-07-28T09:44:15.049872,I am hungry,sadness,66.91434383392334
+2025-07-28T09:44:27.766957,I am hungry,sadness,66.91434383392334
+2025-07-28T09:52:17.976246,test,neutral,68.89050602912903
+2025-07-28T09:54:19.510573,Hey I am hungry,neutral,49.29881095886231
+2025-07-28T09:55:22.760155,yes,neutral,85.28300523757935
+2025-07-28T10:14:51.532295,hey,neutral,80.51066994667053
+2025-07-28T10:29:41.433176,i just ate chips because i was angry with my rommate,anger,98.91485571861269
+2025-07-28T10:29:57.822243,yes i want to vent it,anger,88.98754119873047
+2025-07-28T10:30:07.190327,yes,neutral,85.28300523757935
+2025-07-28T10:33:38.221195,I just ate chips because i was angry with my mom,anger,98.51817488670348
+2025-07-28T10:33:50.227428,yes i want to vent it,anger,88.98754119873047
+2025-07-28T10:37:43.937844,i am happy and i ate an ice cream,joy,99.17709827423096
+2025-07-28T10:37:57.100913,how are you doing today,neutral,48.6709862947464
+2025-07-28T10:38:19.191684,i want to excercise right now,sadness,62.16467618942261
+2025-07-28T10:47:50.469209,I just ate a pizza to celebrate my sisters graduation,joy,73.59197735786438
+2025-07-28T10:48:06.130293,i am just happy,joy,98.99252653121948
+2025-07-28T10:49:08.815313,i do not want to eat the pizza just to celebrate. help me with this addiction of eating bad,joy,58.77662897109985
+2025-07-28T14:14:08.310122,I just ate a pizza to celebrate my sisters graduation,joy,73.59197735786438
+2025-07-28T14:14:31.418389,let's do it,neutral,89.05900120735168
+2025-07-28T14:15:15.318915,i have been thinking of not eating even when i am happy as it is still emotional eating,joy,98.49943518638612
+2025-07-28T14:15:49.824055,meeting friends and going for lunch and dinner,joy,90.16026854515076
+2025-07-28T14:16:16.271942,can you suggest me better ways to do it,neutral,90.30705690383913
+2025-07-28T14:16:55.178259,i was able to delay my breakfast by 2 hours as i promised myself i would only eat it once i finish my homework,joy,91.1641538143158
+2025-07-28T14:50:36.198683,I ate too much pizza because I was stressed about my presentation tomorrow,anger,74.99812841415405
+2025-07-28T14:54:10.775434,I want to celebrate my promotion but not with food. Can you help me find better ways?,neutral,74.39994812011719
+2025-07-28T14:55:38.430085,I need help with emotional eating,neutral,46.95194959640503
+2025-07-28T15:01:26.266758,I am feeling stressed and want to eat chocolate,anger,97.78789281845091
+2025-07-28T15:06:21.846896,I feel stressed and want comfort food,anger,92.99097657203674
+2025-07-28T15:20:31.807853,I feel sad and want ice cream,sadness,98.53177666664124
+2025-07-28T15:20:58.068112,I got a promotion and want to celebrate with food!,joy,81.47776126861572
+2025-07-28T15:20:58.338424,I am stressed about my presentation tomorrow,anger,65.57369232177734
+2025-07-28T15:41:11.367698,I feel stressed about work and want to eat chocolate,anger,94.83484625816344
+2025-07-28T15:41:37.314790,I got a promotion and want to celebrate with cake!,joy,80.95364570617676
+2025-07-28T15:42:47.599677,"i want to drink a soda right now, i am bored doing my project.",sadness,97.14743494987488
+2025-07-28T15:43:42.272079,i want to control myself and delay it till later. i know soda is bad for me,sadness,80.06758689880371
+2025-07-28T15:44:24.626035,"yes please suggest me some ways to do it, i want to fight it",neutral,79.98329401016235
+2025-07-28T15:45:21.302849,i just ate my breakfast at 11 am. it is 4 pm now and i am hungry. not sure if i should drink a soda right now,sadness,55.570435523986816
+2025-07-28T15:46:01.015747,should i drink a soda right now?,sadness,72.601318359375
+2025-07-28T15:47:22.237453,I just ate my breakfast at 11 am. it is 4 pm now and i am hungry. not sure if i should drink a soda right now,sadness,40.95858335494995
+2025-07-28T15:47:48.148511,should i drink a soda right now?,sadness,72.601318359375
+2025-07-28T15:48:53.388742,should i drink a soda right now?,sadness,72.601318359375
+2025-07-28T15:53:35.154291,should i drink a soda right now?,sadness,72.601318359375
+2025-07-28T15:53:51.776602,I feel really stressed about my job and I want to eat a whole bag of chips to feel better,anger,84.89556312561035
+2025-07-28T15:54:45.285267,should i eat chips?,fear,30.0647646188736
+2025-07-28T18:16:35.762343,should i have an ice cream?,sadness,66.81069135665894
+2025-07-28T18:32:27.006973,hi i want to eat chips,surprise,33.42622220516205
+2025-07-28T18:32:53.186785,shoul i have an ice cream?,neutral,57.94312953948975
+2025-07-28T18:33:49.252772,should i eat an ice cream?,sadness,52.27510929107666
+2025-07-28T18:35:50.861916,should I drink a soda right now?,neutral,25.13534426689148
+2025-07-28T18:36:37.156894,shoul i eat a bag of chips?,surprise,51.196032762527466
+2025-07-28T18:54:09.736101,I want a snack,neutral,55.60441017150879
+2025-07-28T18:55:58.394763,i want a snack,joy,89.8670494556427
+2025-07-28T18:56:04.112654,test,neutral,68.89050602912903
+2025-07-28T18:59:29.241504,I want a snack,neutral,55.60441017150879
+2025-07-28T19:00:01.025720,i want a soda,joy,61.23425364494324
+2025-07-28T19:01:13.882646,i want to eat a pizza to celebrate my team winning the soccer game today,joy,98.34048748016356
+2025-07-28T19:02:03.345233,"every day as soon as i wake up, i am hungry. why is that?",surprise,47.911107540130615
+2025-07-28T19:03:24.861190,"from now on i will update you everyday what i eat, will you be able to give me patterns on what i do wrong and what i can improve upon?",neutral,89.8806631565094
+2025-07-28T19:04:06.138359,"I am in this app to know my patterns of emotional eating, would you be able to help me with that?",neutral,86.36411428451538
+2025-07-28T19:07:53.679010,I feel stressed,anger,80.661940574646
+2025-07-28T19:08:12.278220,maybe music,neutral,92.92183518409728
+2025-07-28T19:08:45.356034,can you give me the current top hip hop songs that i can enjoy,neutral,46.92289233207703
+2025-07-28T19:09:17.817451,I want to track my patterns tho,neutral,69.78029608726501
+2025-07-28T19:09:35.737787,Help me with emotional eating,neutral,88.40970396995544
+2025-07-28T19:10:32.465133,I think I usually reach for food when I am bored and have nothing to do,neutral,54.287153482437134
+2025-07-28T19:11:09.429494,Daily meal updates?,neutral,70.9223985671997
+2025-07-28T19:12:25.439350,How many calories are in an apple?,neutral,66.76074862480164
+2025-07-28T19:12:46.016318,Nutition facts for chicken?,neutral,79.15845513343811
+2025-07-28T19:13:00.416389,I'm using this app to understand my emotional eating patterns,neutral,69.31952238082886
+2025-07-28T19:13:18.390922,I want to track what I eat daily,neutral,88.48218321800232
+2025-07-28T19:13:34.328390,Help me recognize my triggers,neutral,62.6387894153595

@@ -43,4 +43,34 @@ logs/
 ### OS ###
 .DS_Store
 Thumbs.db
+
+### Environment & Security ###
 .env
+.env.*
+backend/.env
+MachineLearning/.env
+**/api_keys.txt
+**/secrets.txt
+
+### Test & Debug Files ###
+test_openai.py
+test_app.py
+test.sh
+OPENAI_INTEGRATION_GUIDE.md
+TempFile.*
+
+### Logs & Cache ###
+*.csv
+*.log
+logs/
+MachineLearning/logs.csv
+MachineLearning/error.log
+MachineLearning/feedback_logs.csv
+__pycache__/
+*.pyc
+*.pyo
+node_modules/.cache
+
+### Build artifacts ###
+frontend/build/
+backend/target/classes/static/

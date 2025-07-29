@@ -8,6 +8,22 @@ from collections import Counter
 import numpy as np
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from dotenv import load_dotenv
+import os
+from openai import AzureOpenAI
+
+load_dotenv()  # 👈 This loads your .env file
+
+# Initialize AzureOpenAI client (required for Dallas AI proxy)
+openai_client = AzureOpenAI(
+    azure_endpoint=os.getenv("OPENAI_API_BASE"),
+    api_key=os.getenv("OPENAI_API_KEY"),
+    api_version="2024-02-01"
+)
+
+# Debug print (optional)
+print("API KEY:", os.getenv("OPENAI_API_KEY"))
+print("API BASE:", os.getenv("OPENAI_API_BASE"))
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -29,6 +45,83 @@ if not os.path.exists(LOG_FILE):
 
 # Setup error log file
 logging.basicConfig(filename="error.log", level=logging.ERROR)
+
+
+
+def generate_openai_response(user_message, emotion, confidence):
+    """Generate an OpenAI response for emotional eating support using AzureOpenAI"""
+    try:
+        print(f"DEBUG: Using AzureOpenAI for EMOTIONAL eating - emotion '{emotion}' with {confidence:.1f}% confidence")
+        
+        system_prompt = f"""You are an emotional eating support specialist for the Mood2Food app. The user is experiencing '{emotion}' emotion with {confidence:.1f}% confidence.
+
+Your role: Help users identify emotional eating patterns, provide healthier coping strategies, and offer encouragement.
+
+If they mention food/eating: Address the emotional trigger and suggest alternatives.
+If they're celebrating: Suggest non-food ways to celebrate.
+If they're stressed/sad: Offer comfort strategies that don't involve food.
+
+Always be empathetic, non-judgmental, and focus on building awareness of eating patterns.
+Keep responses under 100 words and actionable."""
+
+        response = openai_client.chat.completions.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_message}
+            ],
+            max_tokens=150,
+            temperature=0.7
+        )
+        
+        content = response.choices[0].message.content.strip()
+        print(f"DEBUG: AzureOpenAI EMOTIONAL SUCCESS: {content[:50]}...")
+        return content
+        
+    except Exception as e:
+        print(f"AzureOpenAI Error: {str(e)}")
+        print(f"Error type: {type(e)}")
+        import traceback
+        traceback.print_exc()
+        return None
+
+
+def generate_practical_response(user_message):
+    """Generate a practical nutrition/wellness response for non-emotional food questions"""
+    try:
+        print(f"DEBUG: Using AzureOpenAI for PRACTICAL question")
+        
+        system_prompt = """You are a helpful nutrition and wellness assistant for the Mood2Food app. The user is asking a practical question about food, drinks, or eating habits.
+
+Your role: Provide helpful, practical advice about nutrition, hydration, meal timing, and healthy choices.
+
+- If they ask about drinks: Suggest healthy alternatives and explain benefits
+- If they ask about hunger/timing: Give practical advice about meals and snacks
+- If they ask about specific foods: Provide balanced nutrition information
+- Be supportive and informative without assuming emotional issues
+
+Keep responses under 100 words, practical, and friendly."""
+
+        response = openai_client.chat.completions.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_message}
+            ],
+            max_tokens=150,
+            temperature=0.7
+        )
+        
+        content = response.choices[0].message.content.strip()
+        print(f"DEBUG: AzureOpenAI PRACTICAL SUCCESS: {content[:50]}...")
+        return content
+        
+    except Exception as e:
+        print(f"AzureOpenAI Practical Error: {str(e)}")
+        print(f"Error type: {type(e)}")
+        import traceback
+        traceback.print_exc()
+        return None
 
 
 @app.errorhandler(Exception)
@@ -56,17 +149,59 @@ def classify():
         # Analyze emotion using Hugging Face model
         emotion, confidence = analyze_emotion(reason)
 
+        # Since this app is for emotional eating support, default to emotional eating unless clearly practical
+        emotional_eating_keywords = [
+            'feel', 'feeling', 'emotions', 'stress', 'sad', 'angry', 'upset', 'comfort', 'craving', 
+            'want to eat because', 'emotional eating', 'patterns', 'track', 'habit', 'triggers', 
+            'mood', 'celebrate', 'bored', 'anxious', 'worried', 'frustrated', 'lonely', 'tired',
+            'pattern recognition', 'eating habits', 'food diary', 'daily meals', 'what i eat',
+            'help me', 'support', 'guidance', 'understand myself', 'improve', 'recognize'
+        ]
+        
+        # Only treat as practical nutrition if clearly asking about specific nutrition facts
+        practical_keywords = [
+            'calories in', 'nutrition facts', 'vitamins', 'protein content', 'carbs in',
+            'how many calories', 'nutritional value', 'is [food] healthy', 'ingredients',
+            'recipe', 'cooking', 'preparation'
+        ]
+        
+        is_practical_nutrition = any(word in reason.lower() for word in practical_keywords)
+        
+        # Generate OpenAI response: Default to emotional eating support unless clearly practical
+        if is_practical_nutrition:
+            openai_response = generate_practical_response(reason)
+        else:
+            # Default to emotional eating support (the app's main purpose)
+            openai_response = generate_openai_response(reason, emotion, confidence*100)
+        
+        # Use OpenAI response if successful, otherwise use enhanced fallback
+        if openai_response:
+            insight = openai_response
+        else:
+            # Enhanced emotional eating support responses
+            emotion_responses = {
+                'joy': "That's wonderful! Let's celebrate this positive moment in ways that nourish your body and soul. Consider a walk in nature, calling a friend, or treating yourself to a relaxing activity rather than food.",
+                'sadness': "I hear that you're feeling sad. It's natural to seek comfort, but let's explore some gentle alternatives. Try some deep breathing, listen to soothing music, or reach out to someone you trust.",
+                'anger': "Feeling angry can be overwhelming. Instead of turning to food, try some physical movement like stretching, journaling your thoughts, or taking a few minutes to cool down with some fresh air.",
+                'fear': "When we're anxious or worried, food can feel like a quick comfort. Let's try some grounding techniques: name 5 things you can see, 4 you can touch, 3 you can hear. This can help calm your mind.",
+                'surprise': "Unexpected emotions can catch us off guard! Take a moment to acknowledge what you're feeling. Sometimes a few deep breaths or a short mindful pause can help you respond rather than react.",
+                'neutral': "It sounds like you're in a calm space right now. This is a great time to check in with yourself - are you eating because you're truly hungry, or for another reason? Trust your body's signals."
+            }
+            
+            insight = emotion_responses.get(emotion.lower(), 
+                f"I notice you're experiencing {emotion.lower()} feelings. Emotional eating is very common - you're not alone in this. Let's focus on understanding what you truly need right now. Is it comfort, energy, celebration, or something else?")
+
         # Log to CSV
         df = pd.read_csv(LOG_FILE)
         df.loc[len(df)] = [datetime.now().isoformat(),
                            reason, emotion, confidence*100]
         df.to_csv(LOG_FILE, index=False)
 
-        # Return JSON response
+        # Return JSON response with AI-generated insight
         return jsonify({
             "emotion": emotion,
             "confidence": confidence*100,
-            "insight": f"This seems to be emotional eating triggered by {emotion.lower()}."
+            "insight": insight
         })
 
     except Exception as e:
