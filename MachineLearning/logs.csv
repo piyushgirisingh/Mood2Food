@@ -1,39 +1,13 @@
-timestamp,text,emotion,confidence
-2025-07-19T14:01:41.209621,I ate cookies because I felt anxious after school,fear,0.9935271739959716
-2025-07-19T14:07:15.209671,I ate cookies because I was feeling bored and stressed,sadness,0.9254244565963744
-2025-07-19T14:10:23.774926,I ate cookies because I was feeling bored and stressed,sadness,92.54244565963744
-2025-07-19T14:10:25.830677,I ate cookies because I was feeling bored and stressed,sadness,92.54244565963744
-2025-07-19T14:10:27.828898,I ate cookies because I was feeling bored and stressed,sadness,92.54244565963744
-2025-07-19T14:10:28.768142,I ate cookies because I was feeling bored and stressed,sadness,92.54244565963744
-2025-07-19T14:10:54.793061,I ate cookies because I was feeling bored and stressed,sadness,92.54244565963744
-2025-07-20T10:11:30.617313,I ate cookies because I felt anxious after school,fear,99.35271739959715
-2025-07-20T10:12:18.413008,I ate cookies because I felt sad after school,sadness,98.70442748069765
-2025-07-20T10:12:31.510194,I ate cookies because I felt happy after school,joy,99.39160943031312
-2025-07-20T10:29:19.402935,I ate chips because I was feeling anxious and overwhelmed,fear,97.92648553848268
-2025-07-20T17:05:30.957446,I ate chips because I was feeling anxious and overwhelmed,fear,97.92648553848268
-2025-07-21T14:59:32.113470,I ate cookies because I felt anxious,fear,99.3229627609253
-2025-07-21T15:15:20.879212,I ate chips because I was hungry after work,disgust,45.695698261260986
-2025-07-21T15:16:30.117215,I ate chips because I was stressed after work,anger,88.85341286659241
-2025-07-21T15:17:23.914770,I ate chips because I was feeling stressed after work,anger,96.70321941375732
-2025-07-21T15:17:51.408495,I ate chips because I was feeling anxious after work,fear,99.44223761558531
-2025-07-21T15:18:11.528431,I ate chips because I was feeling bored after work,sadness,94.92860436439514
-2025-07-21T15:18:32.126248,I ate chips because I was stressed after work,anger,88.85341286659241
-2025-07-21T15:20:23.517164,I ate chips because I was tired and alone after work,sadness,97.61036038398744
-2025-07-21T15:21:08.042924,I ate chips because I was so mad at my boss after work,anger,87.82598972320557
-2025-07-21T15:21:55.698975,I celebrated with piza after a good day,joy,97.91523814201356
-2025-07-21T15:22:24.940177,I ate because I was really stressed before my exam,anger,69.79358792304993
-2025-07-21T15:35:32.160400,I ate because I was really stressed before my exam,anger,69.79358792304993
-2025-07-21T15:35:36.976083,I ate because I was really stressed before my exam,anger,69.79358792304993
-2025-07-21T15:35:37.923842,I ate because I was really stressed before my exam,anger,69.79358792304993
-2025-07-21T15:35:39.077525,I ate because I was really stressed before my exam,anger,69.79358792304993
-2025-07-21T15:35:41.054873,I ate because I was really stressed before my exam,anger,69.79358792304993
-2025-07-21T15:35:42.912780,I ate because I was really stressed before my exam,anger,69.79358792304993
-2025-07-21T15:35:44.635976,I ate because I was really stressed before my exam,anger,69.79358792304993
-2025-07-21T15:35:46.388105,I ate because I was really stressed before my exam,anger,69.79358792304993
-2025-07-21T15:35:48.111788,I ate because I was really stressed before my exam,anger,69.79358792304993
-2025-07-27T17:10:21.056642,I am feeling lonely,sadness,99.11215305328368
-2025-07-27T17:16:10.106235,I am feeling stressed,anger,93.39491724967957
-2025-07-27T17:19:19.242132,I am happy,joy,96.57410383224487
-2025-07-27T17:20:27.945790,test,neutral,68.89050602912903
-2025-07-27T17:25:13.060817,I am happy,joy,96.57410383224487
-2025-07-27T17:25:55.605464,Hey I am really anxious. I feel like dying. ,fear,98.36523532867432
+timestamp,text,emotion,confidence,user_id
+2025-07-29T11:45:13.614653,I had a stressful day at work and want to eat ice cream,sadness,83.98349285125732,test-user
+2025-07-29T14:36:40.795615,do you remmber my eating patterns so far?,neutral,80.45907020568848,330cf335-00ac-4974-b159-ad986c4ce2db
+2025-07-29T15:36:10.702110,i am feeling stressed and want to eat chocolate,anger,98.5787272453308,330cf335-00ac-4974-b159-ad986c4ce2db
+2025-07-29T15:36:59.322639,make i will take a walk,neutral,50.39263963699341,330cf335-00ac-4974-b159-ad986c4ce2db
+2025-07-29T15:39:59.309346,I'm feeling overwhelmed,surprise,75.60064792633057,330cf335-00ac-4974-b159-ad986c4ce2db
+2025-07-29T15:41:24.462568,hi there,neutral,71.98991775512695,645a4522-7558-4891-b356-bea939b38d3a
+2025-07-29T15:41:50.520795,I'm feeling stressed and want to eat chocolate,anger,97.05879092216492,645a4522-7558-4891-b356-bea939b38d3a
+2025-07-29T15:42:23.991005,I am going to go for a walk,joy,51.2869656085968,645a4522-7558-4891-b356-bea939b38d3a
+2025-07-29T15:43:43.147703,i just at my breakfast like 2 hours ago but now i think i want to eat something again. should i eat something now? is this emotional eating?,sadness,54.72530722618103,645a4522-7558-4891-b356-bea939b38d3a
+2025-07-29T15:44:55.960568,i don't think i am stressed but i have been sitting in this same desk for the past 2 hours doing my project. maybe boredom might be an issue here? what do you think?,sadness,91.02199673652648,645a4522-7558-4891-b356-bea939b38d3a
+2025-07-29T15:46:24.353379,ok great from today i will update you with what i eat and ask you whenever i am confused if my hunger side is because of emotional eating? help me differentiate it,surprise,67.35702753067017,645a4522-7558-4891-b356-bea939b38d3a
+2025-07-29T18:10:36.688301,can you help me with my cs 3310 homework?,neutral,71.63996696472168,645a4522-7558-4891-b356-bea939b38d3a

@@ -8,4 +8,5 @@ import java.util.UUID;
 
 public interface CopingToolUsageRepository extends JpaRepository<CopingToolUsage, UUID> {
     List<CopingToolUsage> findByStudentOrderByUsedAtDesc(Student student);
+    long countByStudent(Student student);
 }
