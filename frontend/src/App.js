@@ -13,7 +13,7 @@ import Dashboard from "./pages/Dashboard";
 import Chat from "./pages/Chat";
 import CopingTools from "./pages/CopingTools";
 import Insights from "./pages/Insights";
-import TriggerLogs from "./pages/TriggerLogs";
+
 import ProtectedRoute from "./components/ProtectedRoute";
 import ScrollingLayout from "./components/ScrollingLayout";
 
@@ -66,16 +66,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            <Route
-              path="/trigger-logs"
-              element={
-                <ProtectedRoute>
-                  <ScrollingLayout>
-                    <TriggerLogs />
-                  </ScrollingLayout>
-                </ProtectedRoute>
-              }
-            />
+
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         </Router>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -13,19 +13,19 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-} from '@mui/material';
+} from "@mui/material";
 import {
   Psychology as PsychologyIcon,
   Lightbulb as LightbulbIcon,
   EmojiEmotions as EmojiIcon,
   AccessTime as TimeIcon,
-} from '@mui/icons-material';
-import { foodInsightsAPI } from '../services/api';
+} from "@mui/icons-material";
+import { foodInsightsAPI } from "../services/api";
 
 const FoodInsights = () => {
   const [insights, setInsights] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   useEffect(() => {
     loadInsights();
@@ -38,10 +38,10 @@ const FoodInsights = () => {
     };
 
     // Listen for custom events when food logs are updated
-    window.addEventListener('foodLogUpdated', handleFoodLogUpdate);
-    
+    window.addEventListener("foodLogUpdated", handleFoodLogUpdate);
+
     return () => {
-      window.removeEventListener('foodLogUpdated', handleFoodLogUpdate);
+      window.removeEventListener("foodLogUpdated", handleFoodLogUpdate);
     };
   }, []);
 
@@ -51,7 +51,7 @@ const FoodInsights = () => {
       const response = await foodInsightsAPI.getEmotionalEatingPatterns();
       setInsights(response.data);
     } catch (err) {
-      setError('Failed to load food insights');
+      setError("Failed to load food insights");
     } finally {
       setLoading(false);
     }
@@ -78,9 +78,11 @@ const FoodInsights = () => {
       <Card sx={{ mt: 2 }}>
         <CardContent>
           <Box display="flex" alignItems="center" justifyContent="center" p={3}>
-            <PsychologyIcon sx={{ fontSize: 48, color: 'text.secondary', mr: 2 }} />
+            <PsychologyIcon
+              sx={{ fontSize: 48, color: "text.secondary", mr: 2 }}
+            />
             <Typography variant="h6" color="text.secondary">
-              {insights?.message || 'No insights available yet'}
+              {insights?.message || "No insights available yet"}
             </Typography>
           </Box>
         </CardContent>
@@ -94,17 +96,15 @@ const FoodInsights = () => {
 
   const getEmotionColor = (emotion) => {
     const colors = {
-      happy: '#4caf50',
-      sad: '#2196f3',
-      angry: '#f44336',
-      anxious: '#ff9800',
-      stressed: '#9c27b0',
-      neutral: '#757575',
+      happy: "#4caf50",
+      sad: "#2196f3",
+      angry: "#f44336",
+      anxious: "#ff9800",
+      stressed: "#9c27b0",
+      neutral: "#757575",
     };
-    return colors[emotion] || '#757575';
+    return colors[emotion] || "#757575";
   };
-
-
 
   return (
     <Box>
@@ -115,27 +115,42 @@ const FoodInsights = () => {
       <Grid container spacing={3}>
         {/* Most Common Emotion */}
         <Grid item xs={12} md={6}>
-          <Card sx={{ height: '100%' }}>
+          <Card sx={{ height: "100%" }}>
             <CardContent>
               <Box display="flex" alignItems="center" gap={1} mb={2}>
                 <EmojiIcon color="primary" />
                 <Typography variant="h6">Most Common Emotion</Typography>
               </Box>
-              
+
               {emotionalPatterns.mostCommonEmotion && (
-                <Box display="flex" alignItems="center" gap={2}>
-                  <Chip
-                    label={emotionalPatterns.mostCommonEmotion}
+                <Box>
+                  <Box display="flex" alignItems="center" mb={2}>
+                    <Chip
+                      label={emotionalPatterns.mostCommonEmotion}
+                      sx={{
+                        backgroundColor: getEmotionColor(
+                          emotionalPatterns.mostCommonEmotion
+                        ),
+                        color: "white",
+                        fontWeight: "bold",
+                        fontSize: "1rem",
+                        padding: "8px 16px",
+                        mr: 2,
+                      }}
+                    />
+                  </Box>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
                     sx={{
-                      backgroundColor: getEmotionColor(emotionalPatterns.mostCommonEmotion),
-                      color: 'white',
-                      fontWeight: 'bold',
-                      fontSize: '1rem',
-                      padding: '8px 16px',
+                      lineHeight: 1.5,
+                      wordWrap: "break-word",
+                      overflowWrap: "break-word",
                     }}
-                  />
-                  <Typography variant="body2" color="text.secondary">
-                    When eating, you most often feel {emotionalPatterns.mostCommonEmotion}
+                  >
+                    When eating, you most often feel{" "}
+                    {emotionalPatterns.mostCommonEmotion}. This insight helps
+                    you understand your emotional eating patterns.
                   </Typography>
                 </Box>
               )}
@@ -146,14 +161,14 @@ const FoodInsights = () => {
         {/* Peak Eating Hours */}
         {timePatterns.peakHours && timePatterns.peakHours.length > 0 && (
           <Grid item xs={12} md={6}>
-            <Card>
+            <Card sx={{ height: "100%" }}>
               <CardContent>
                 <Box display="flex" alignItems="center" gap={1} mb={2}>
                   <TimeIcon color="primary" />
                   <Typography variant="h6">Peak Eating Hours</Typography>
                 </Box>
-                
-                <Box display="flex" gap={1} flexWrap="wrap">
+
+                <Box display="flex" gap={1} flexWrap="wrap" mb={2}>
                   {timePatterns.peakHours.map((hour, index) => (
                     <Chip
                       key={hour}
@@ -164,16 +179,23 @@ const FoodInsights = () => {
                     />
                   ))}
                 </Box>
-                
-                <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                  You tend to eat most during these hours
+
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{
+                    lineHeight: 1.5,
+                    wordWrap: "break-word",
+                    overflowWrap: "break-word",
+                  }}
+                >
+                  You tend to eat most during these hours. Consider planning
+                  healthy snacks for these times.
                 </Typography>
               </CardContent>
             </Card>
           </Grid>
         )}
-
-
 
         {/* Personalized Recommendations */}
         {recommendations.length > 0 && (
@@ -182,9 +204,11 @@ const FoodInsights = () => {
               <CardContent>
                 <Box display="flex" alignItems="center" gap={1} mb={2}>
                   <LightbulbIcon color="primary" />
-                  <Typography variant="h6">Personalized Recommendations</Typography>
+                  <Typography variant="h6">
+                    Personalized Recommendations
+                  </Typography>
                 </Box>
-                
+
                 <List>
                   {recommendations.map((recommendation, index) => (
                     <ListItem key={index} sx={{ px: 0 }}>
@@ -193,7 +217,14 @@ const FoodInsights = () => {
                       </ListItemIcon>
                       <ListItemText
                         primary={recommendation}
-                        primaryTypographyProps={{ variant: 'body2' }}
+                        primaryTypographyProps={{
+                          variant: "body2",
+                          sx: {
+                            lineHeight: 1.5,
+                            wordWrap: "break-word",
+                            overflowWrap: "break-word",
+                          },
+                        }}
                       />
                     </ListItem>
                   ))}
@@ -207,4 +238,4 @@ const FoodInsights = () => {
   );
 };
 
-export default FoodInsights; 
+export default FoodInsights;

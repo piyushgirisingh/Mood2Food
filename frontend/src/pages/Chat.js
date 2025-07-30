@@ -77,7 +77,9 @@ const Chat = ({ onClose }) => {
     setGlowActive(true);
 
     try {
-      const response = await chatAPI.sendMessage(message);
+      // Add context about emotional eating support
+      const enhancedMessage = `[Emotional Eating Support Context] ${message}`;
+      const response = await chatAPI.sendMessage(enhancedMessage);
       if (response.data) {
         const botMessage = {
           text: response.data.reply,

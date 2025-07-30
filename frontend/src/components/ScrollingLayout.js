@@ -49,7 +49,6 @@ const ScrollingLayout = ({ children }) => {
     { path: "/", title: "Dashboard" },
     { path: "/coping-tools", title: "Coping Tools" },
     { path: "/insights", title: "Insights" },
-    { path: "/trigger-logs", title: "Trigger Logs" },
   ];
 
   const handleMenuOpen = (event) => {
@@ -181,6 +180,16 @@ const ScrollingLayout = ({ children }) => {
                 sx={{
                   position: "relative",
                   fontWeight: location.pathname === section.path ? 600 : 400,
+                  backgroundColor:
+                    location.pathname === section.path
+                      ? "rgba(139, 92, 246, 0.15)"
+                      : "transparent",
+                  borderRadius: "8px",
+                  padding: "8px 16px",
+                  border:
+                    location.pathname === section.path
+                      ? "1px solid rgba(139, 92, 246, 0.3)"
+                      : "1px solid transparent",
                   "&::after": {
                     content: '""',
                     position: "absolute",
@@ -191,6 +200,16 @@ const ScrollingLayout = ({ children }) => {
                     bgcolor: "primary.main",
                     transform: "translateX(-50%)",
                     transition: "all 0.3s ease-in-out",
+                  },
+                  "&:hover": {
+                    backgroundColor:
+                      location.pathname === section.path
+                        ? "rgba(139, 92, 246, 0.25)"
+                        : "rgba(255, 255, 255, 0.1)",
+                    borderColor:
+                      location.pathname === section.path
+                        ? "rgba(139, 92, 246, 0.5)"
+                        : "rgba(255, 255, 255, 0.2)",
                   },
                   "&:hover::after": {
                     width: "80%",
