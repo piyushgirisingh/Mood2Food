@@ -10,8 +10,11 @@ import {
   Avatar,
   CircularProgress,
   Alert,
+  Rating,
+  IconButton,
+  Tooltip,
 } from '@mui/material';
-import { Send, Person, SmartToy } from '@mui/icons-material';
+import { Send, Person, SmartToy, ThumbUp, ThumbDown } from '@mui/icons-material';
 import { chatAPI } from '../services/api';
 
 const Chat = () => {
@@ -19,6 +22,7 @@ const Chat = () => {
   const [inputMessage, setInputMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [ratings, setRatings] = useState({}); // Track ratings for each message
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
@@ -81,6 +85,34 @@ const Chat = () => {
     }
   };
 
+  const handleRating = async (messageId, rating) => {
+    try {
+      const message = messages.find(m => m.id === messageId);
+      if (!message || message.sender !== 'BOT') return;
+
+      // Update local ratings
+      setRatings(prev => ({ ...prev, [messageId]: rating }));
+
+      // Send feedback to backend
+      await chatAPI.sendFeedback({
+        message: messages[messages.length - 2]?.message || '', // User's message
+        response: message.message,
+        emotion: 'neutral', // You could extract this from the response
+        rating: rating,
+        feedback_text: rating >= 4 ? 'Helpful response' : 'Could be better'
+      });
+
+      console.log(`Rated message ${messageId} with ${rating} stars`);
+    } catch (err) {
+      console.error('Failed to send feedback:', err);
+    }
+  };
+
+  const handleQuickRating = async (messageId, isPositive) => {
+    const rating = isPositive ? 5 : 1;
+    await handleRating(messageId, rating);
+  };
+
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -139,6 +171,49 @@ const Chat = () => {
                   >
                     {new Date(message.timestamp).toLocaleTimeString()}
                   </Typography>
+                  
+                  {/* Rating interface for bot messages */}
+                  {message.sender === 'BOT' && (
+                    <Box sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Typography variant="caption" sx={{ opacity: 0.7 }}>
+                        Rate this response:
+                      </Typography>
+                      <Rating
+                        size="small"
+                        value={ratings[message.id] || 0}
+                        onChange={(event, newValue) => {
+                          if (newValue !== null) {
+                            handleRating(message.id, newValue);
+                          }
+                        }}
+                        sx={{ '& .MuiRating-iconFilled': { color: '#ff9800' } }}
+                      />
+                      <Tooltip title="This was helpful">
+                        <IconButton
+                          size="small"
+                          onClick={() => handleQuickRating(message.id, true)}
+                          sx={{ 
+                            color: ratings[message.id] === 5 ? '#4caf50' : 'grey.400',
+                            '&:hover': { color: '#4caf50' }
+                          }}
+                        >
+                          <ThumbUp fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="This was not helpful">
+                        <IconButton
+                          size="small"
+                          onClick={() => handleQuickRating(message.id, false)}
+                          sx={{ 
+                            color: ratings[message.id] === 1 ? '#f44336' : 'grey.400',
+                            '&:hover': { color: '#f44336' }
+                          }}
+                        >
+                          <ThumbDown fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+                    </Box>
+                  )}
                 </Box>
               </ListItem>
             ))}

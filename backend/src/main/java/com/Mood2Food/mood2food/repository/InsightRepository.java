@@ -10,4 +10,6 @@ public interface InsightRepository extends JpaRepository<Insight, UUID> {
     List<Insight> findByStudentOrderByCreatedAtDesc(Student student);
 
     Insight findFirstByStudentOrderByCreatedAtDesc(Student student);
+    
+    long countByStudent(Student student);
 }

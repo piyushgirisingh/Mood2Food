@@ -12,6 +12,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import java.util.HashMap;
+
 @RestController
 @RequestMapping("/api/dashboard")
 public class DashboardController {
@@ -29,5 +31,11 @@ public class DashboardController {
         if (studentOpt.isEmpty())
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         return ResponseEntity.ok(dashboardService.getDashboardData(studentOpt.get()));
+    }
+
+    @GetMapping("/fun-fact")
+    public ResponseEntity<Map<String, Object>> getFunFact() {
+        Map<String, Object> funFact = dashboardService.getFunFactOfTheDay();
+        return ResponseEntity.ok(funFact);
     }
 }

@@ -8,4 +8,6 @@ import java.util.UUID;
 
 public interface ChatMessageRepository extends JpaRepository<ChatMessage, UUID> {
     List<ChatMessage> findByStudentOrderByTimestampAsc(Student student);
+    List<ChatMessage> findTop10ByStudentOrderByTimestampDesc(Student student);
+    long countByStudent(Student student);
 }

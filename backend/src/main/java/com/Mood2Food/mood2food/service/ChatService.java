@@ -3,6 +3,7 @@ package com.Mood2Food.mood2food.service;
 import com.Mood2Food.mood2food.entity.ChatMessage;
 import com.Mood2Food.mood2food.entity.Student;
 import com.Mood2Food.mood2food.repository.ChatMessageRepository;
+import com.Mood2Food.mood2food.service.FoodInsightService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -13,11 +14,15 @@ import java.util.List;
 import io.github.cdimascio.dotenv.Dotenv;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.ArrayList;
 
 @Service
 public class ChatService {
     @Autowired
     private ChatMessageRepository chatMessageRepository;
+    
+    @Autowired
+    private FoodInsightService foodInsightService;
 
     private static final Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
 
@@ -154,12 +159,32 @@ private String getOpenAIReply(String userMessage, String emotion, double confide
         return chatMessageRepository.findByStudentOrderByTimestampAsc(student);
     }
 
-    public String getBotReply(String userMessage) {
+    public String getBotReply(String userMessage, Student student) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        java.util.Map<String, String> body = new java.util.HashMap<>();
-        body.put("reason", userMessage); // Your Flask model expects this key
+        // Get recent chat history for context
+        List<ChatMessage> recentHistory = chatMessageRepository
+            .findTop10ByStudentOrderByTimestampDesc(student);
+        
+        // Get food log insights for personalized context
+        Map<String, Object> foodInsights = foodInsightService.getRecentFoodInsights(student);
+        
+        // Build conversation context
+        List<Map<String, String>> conversationHistory = new ArrayList<>();
+        for (ChatMessage msg : recentHistory) {
+            Map<String, String> historyItem = new HashMap<>();
+            historyItem.put("sender", msg.getSender());
+            historyItem.put("message", msg.getMessage());
+            historyItem.put("timestamp", msg.getTimestamp().toString());
+            conversationHistory.add(historyItem);
+        }
+
+        java.util.Map<String, Object> body = new java.util.HashMap<>();
+        body.put("reason", userMessage);
+        body.put("user_id", student.getId().toString());
+        body.put("conversation_history", conversationHistory);
+        body.put("food_insights", foodInsights);
 
         try {
             String jsonBody = objectMapper.writeValueAsString(body);
@@ -178,7 +203,7 @@ private String getOpenAIReply(String userMessage, String emotion, double confide
 
                 // Use the GPT-4 response from ML service (insight field)
                 if (insight != null && !insight.isEmpty()) {
-                    return insight;  // ✅ Return the actual GPT-4 response!
+                    return insight;  // ✅ Return the context-aware GPT-4 response!
                 }
                 
                 // Fallback to hardcoded responses only if ML service insight is empty
@@ -192,6 +217,28 @@ private String getOpenAIReply(String userMessage, String emotion, double confide
         } catch (Exception e) {
             return "Oops! Something went wrong while talking to my brain (ML server).";
         }
+    }
 
+    public Map<String, Object> getUserPatterns(Student student) {
+        try {
+            String url = dotenv.get("ML_BACKEND_URL", mlApiUrl).replace("/classify-emotion", 
+                "/user-patterns/" + student.getId().toString());
+            
+            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+            
+            if (response.getStatusCode().is2xxSuccessful()) {
+                return objectMapper.readValue(response.getBody(), Map.class);
+            } else {
+                Map<String, Object> fallback = new HashMap<>();
+                fallback.put("error", "Unable to retrieve patterns at this time");
+                return fallback;
+            }
+            
+        } catch (Exception e) {
+            System.err.println("Error getting user patterns: " + e.getMessage());
+            Map<String, Object> fallback = new HashMap<>();
+            fallback.put("error", "Pattern analysis unavailable");
+            return fallback;
+        }
     }
 }

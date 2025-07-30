@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.Map;
+import org.springframework.web.client.RestTemplate;
 
 @RestController
 @RequestMapping("/api/chat")
@@ -25,6 +27,9 @@ public class ChatController {
     private StudentRepository studentRepository;
     @Autowired
     private JwtUtil jwtUtil;
+    @Autowired
+    private RestTemplate restTemplate;
+    private static final String mlBackendUrl = "http://localhost:10000"; // ML backend URL
 
     @PostMapping("/message")
     public ResponseEntity<ChatMessageResponse> sendMessage(@RequestHeader("Authorization") String token,
@@ -42,8 +47,8 @@ public class ChatController {
         userMsg.setMessage(request.getMessage());
         chatService.saveMessage(userMsg);
 
-        // Call ML backend with user message and get bot reply
-        String botReply = chatService.getBotReply(request.getMessage());
+        // Call ML backend with user message, student context, and chat history
+        String botReply = chatService.getBotReply(request.getMessage(), student);
 
         // Save bot message
         ChatMessage botMsg = new ChatMessage();
@@ -73,5 +78,63 @@ public class ChatController {
             return r;
         }).collect(Collectors.toList());
         return ResponseEntity.ok(responses);
+    }
+
+    @GetMapping("/patterns")
+    public ResponseEntity<?> getUserPatterns(@RequestHeader("Authorization") String token) {
+        try {
+            String jwt = token.substring(7);
+            String userEmail = jwtUtil.extractEmail(jwt);
+            Student student = studentRepository.findByEmail(userEmail)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            
+            String patternsUrl = mlBackendUrl + "/user-patterns/" + student.getId();
+            ResponseEntity<String> response = restTemplate.getForEntity(patternsUrl, String.class);
+            
+            return ResponseEntity.ok(response.getBody());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error fetching user patterns: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/feedback")
+    public ResponseEntity<?> collectFeedback(@RequestHeader("Authorization") String token, 
+                                          @RequestBody Map<String, Object> feedbackRequest) {
+        try {
+            String jwt = token.substring(7);
+            String userEmail = jwtUtil.extractEmail(jwt);
+            Student student = studentRepository.findByEmail(userEmail)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            
+            // Add user_id to the request
+            feedbackRequest.put("user_id", student.getId().toString());
+            
+            String feedbackUrl = mlBackendUrl + "/feedback";
+            ResponseEntity<String> response = restTemplate.postForEntity(feedbackUrl, feedbackRequest, String.class);
+            
+            return ResponseEntity.ok(response.getBody());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error collecting feedback: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/learning-stats")
+    public ResponseEntity<?> getLearningStats(@RequestHeader("Authorization") String token) {
+        try {
+            String jwt = token.substring(7);
+            String userEmail = jwtUtil.extractEmail(jwt);
+            Student student = studentRepository.findByEmail(userEmail)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            
+            String statsUrl = mlBackendUrl + "/learning-stats/" + student.getId();
+            ResponseEntity<String> response = restTemplate.getForEntity(statsUrl, String.class);
+            
+            return ResponseEntity.ok(response.getBody());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error fetching learning stats: " + e.getMessage());
+        }
     }
 }
