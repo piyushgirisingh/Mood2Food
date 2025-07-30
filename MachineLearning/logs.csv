@@ -11,3 +11,7 @@ timestamp,text,emotion,confidence,user_id
 2025-07-29T15:44:55.960568,i don't think i am stressed but i have been sitting in this same desk for the past 2 hours doing my project. maybe boredom might be an issue here? what do you think?,sadness,91.02199673652648,645a4522-7558-4891-b356-bea939b38d3a
 2025-07-29T15:46:24.353379,ok great from today i will update you with what i eat and ask you whenever i am confused if my hunger side is because of emotional eating? help me differentiate it,surprise,67.35702753067017,645a4522-7558-4891-b356-bea939b38d3a
 2025-07-29T18:10:36.688301,can you help me with my cs 3310 homework?,neutral,71.63996696472168,645a4522-7558-4891-b356-bea939b38d3a
+2025-07-30T00:50:35.198945,hey ,fear,45.87711691856384,e569c3d0-79e0-4d9f-a920-eeb16d61ea83
+2025-07-30T00:50:42.659638,I am hungey,neutral,63.218748569488525,e569c3d0-79e0-4d9f-a920-eeb16d61ea83
+2025-07-30T00:52:28.766779,I wanna eat chips,sadness,64.65641260147095,e569c3d0-79e0-4d9f-a920-eeb16d61ea83
+2025-07-30T00:53:06.260414,I am angry,anger,99.18979406356812,e569c3d0-79e0-4d9f-a920-eeb16d61ea83

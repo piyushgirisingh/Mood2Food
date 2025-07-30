@@ -6,7 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.UUID;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface TriggerLogRepository extends JpaRepository<TriggerLog, UUID> {
     List<TriggerLog> findByStudentId(UUID studentId);
     long countByStudent(Student student);

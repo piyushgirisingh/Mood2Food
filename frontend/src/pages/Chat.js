@@ -1,262 +1,343 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef, useEffect } from "react";
 import {
   Box,
-  Paper,
   TextField,
-  Button,
-  Typography,
-  List,
-  ListItem,
-  Avatar,
-  CircularProgress,
-  Alert,
-  Rating,
   IconButton,
-  Tooltip,
-} from '@mui/material';
-import { Send, Person, SmartToy, ThumbUp, ThumbDown } from '@mui/icons-material';
-import { chatAPI } from '../services/api';
+  Paper,
+  Typography,
+  Avatar,
+  Fade,
+  CircularProgress,
+  useTheme,
+  Alert,
+  Snackbar,
+} from "@mui/material";
+import { Send, SmartToy } from "@mui/icons-material";
+import GlowingBorder from "../components/GlowingBorder";
+import { chatAPI } from "../services/api";
+import { useAuth } from "../contexts/AuthContext";
 
 const Chat = () => {
+  const theme = useTheme();
+  const { user } = useAuth();
+  const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
-  const [inputMessage, setInputMessage] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [ratings, setRatings] = useState({}); // Track ratings for each message
+  const [isTyping, setIsTyping] = useState(false);
+  const [glowActive, setGlowActive] = useState(false);
+  const [error, setError] = useState("");
   const messagesEndRef = useRef(null);
 
+  // Load chat history on component mount
   useEffect(() => {
-    loadChatHistory();
-  }, []);
+    if (user) {
+      loadChatHistory();
+    }
+  }, [user]);
+
+  const loadChatHistory = async () => {
+    try {
+      const response = await chatAPI.getChatHistory();
+      if (response.data && Array.isArray(response.data)) {
+        const formattedMessages = response.data.map((msg) => {
+          const [sender, ...messageParts] = msg.reply.split(": ");
+          return {
+            text: messageParts.join(": "),
+            sender: sender.toLowerCase(),
+            timestamp: msg.timestamp,
+          };
+        });
+        setMessages(formattedMessages);
+      }
+    } catch (err) {
+      console.error("Error loading chat history:", err);
+      setError("Failed to load chat history. Please try again later.");
+    }
+  };
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+  const handleSend = async () => {
+    if (!message.trim() || !user) return;
 
-  const loadChatHistory = async () => {
-    try {
-      const response = await chatAPI.getChatHistory();
-      const formattedMessages = response.data.map((msg, index) => {
-        const [sender, ...messageParts] = msg.reply.split(': ');
-        return {
-          id: index,
-          sender: sender.toUpperCase(),
-          message: messageParts.join(': '),
-          timestamp: msg.timestamp,
-        };
-      });
-      setMessages(formattedMessages);
-    } catch (err) {
-      setError('Failed to load chat history');
-    }
-  };
-
-  const sendMessage = async () => {
-    if (!inputMessage.trim()) return;
-
-    const userMessage = {
-      id: Date.now(),
-      sender: 'USER',
-      message: inputMessage,
+    const newMessage = {
+      text: message,
+      sender: "user",
       timestamp: new Date().toISOString(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
-    setInputMessage('');
-    setLoading(true);
+    setMessages((prev) => [...prev, newMessage]);
+    setMessage("");
+    setIsTyping(true);
+    setGlowActive(true);
 
     try {
-      const response = await chatAPI.sendMessage(inputMessage);
-      const botMessage = {
-        id: Date.now() + 1,
-        sender: 'BOT',
-        message: response.data.reply,
-        timestamp: response.data.timestamp,
-      };
-      setMessages(prev => [...prev, botMessage]);
+      const response = await chatAPI.sendMessage(message);
+      if (response.data) {
+        const botMessage = {
+          text: response.data.reply,
+          sender: "bot",
+          timestamp: response.data.timestamp || new Date().toISOString(),
+        };
+        setMessages((prev) => [...prev, botMessage]);
+      }
     } catch (err) {
-      setError('Failed to send message');
+      console.error("Error sending message:", err);
+      setError("Failed to send message. Please try again.");
+      // Remove the failed message
+      setMessages((prev) => prev.slice(0, -1));
     } finally {
-      setLoading(false);
+      setIsTyping(false);
+      setTimeout(() => setGlowActive(false), 1000);
     }
-  };
-
-  const handleRating = async (messageId, rating) => {
-    try {
-      const message = messages.find(m => m.id === messageId);
-      if (!message || message.sender !== 'BOT') return;
-
-      // Update local ratings
-      setRatings(prev => ({ ...prev, [messageId]: rating }));
-
-      // Send feedback to backend
-      await chatAPI.sendFeedback({
-        message: messages[messages.length - 2]?.message || '', // User's message
-        response: message.message,
-        emotion: 'neutral', // You could extract this from the response
-        rating: rating,
-        feedback_text: rating >= 4 ? 'Helpful response' : 'Could be better'
-      });
-
-      console.log(`Rated message ${messageId} with ${rating} stars`);
-    } catch (err) {
-      console.error('Failed to send feedback:', err);
-    }
-  };
-
-  const handleQuickRating = async (messageId, isPositive) => {
-    const rating = isPositive ? 5 : 1;
-    await handleRating(messageId, rating);
   };
 
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      sendMessage();
+      handleSend();
     }
   };
 
-  return (
-    <Box>
-      <Typography variant="h4" gutterBottom>
-        Chat with AI Assistant
-      </Typography>
-      
-      {error && (
-        <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError('')}>
-          {error}
-        </Alert>
-      )}
+  const formatTime = (timestamp) => {
+    return new Date(timestamp).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
 
-      <Paper sx={{ height: '60vh', display: 'flex', flexDirection: 'column' }}>
-        <Box sx={{ flexGrow: 1, overflow: 'auto', p: 2 }}>
-          <List>
-            {messages.map((message) => (
-              <ListItem
-                key={message.id}
+  if (!user) {
+    return (
+      <Box
+        sx={{
+          height: "calc(100vh - 100px)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Typography variant="h6" color="text.secondary">
+          Please log in to use the chat feature.
+        </Typography>
+      </Box>
+    );
+  }
+
+  return (
+    <Box
+      sx={{
+        height: "calc(100vh - 100px)",
+        display: "flex",
+        flexDirection: "column",
+        gap: 2,
+        p: 3,
+        position: "relative",
+      }}
+    >
+      <GlowingBorder isActive={glowActive} />
+
+      <Paper
+        elevation={3}
+        sx={{
+          flex: 1,
+          borderRadius: 4,
+          overflow: "hidden",
+          display: "flex",
+          flexDirection: "column",
+          bgcolor: "background.paper",
+          border: "1px solid",
+          borderColor: "divider",
+          position: "relative",
+        }}
+      >
+        {/* Messages Container */}
+        <Box
+          sx={{
+            flex: 1,
+            overflowY: "auto",
+            p: 3,
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+            bgcolor: "#f8fafc",
+          }}
+        >
+          {messages.map((msg, index) => (
+            <Fade in key={index}>
+              <Box
                 sx={{
-                  flexDirection: message.sender === 'USER' ? 'row-reverse' : 'row',
-                  alignItems: 'flex-start',
+                  display: "flex",
+                  flexDirection: msg.sender === "user" ? "row-reverse" : "row",
+                  gap: 1,
+                  alignItems: "flex-start",
                 }}
               >
-                <Avatar sx={{ 
-                  bgcolor: message.sender === 'USER' ? '#1976d2' : '#4caf50',
-                  ml: message.sender === 'USER' ? 1 : 0,
-                  mr: message.sender === 'BOT' ? 1 : 0,
-                }}>
-                  {message.sender === 'USER' ? <Person /> : <SmartToy />}
-                </Avatar>
-                <Box
+                <Avatar
                   sx={{
-                    maxWidth: '70%',
-                    bgcolor: message.sender === 'USER' ? '#1976d2' : '#f5f5f5',
-                    color: message.sender === 'USER' ? 'white' : 'black',
-                    borderRadius: 2,
-                    p: 2,
-                    mb: 1,
+                    bgcolor:
+                      msg.sender === "user"
+                        ? theme.palette.primary.main
+                        : theme.palette.secondary.main,
+                    boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
                   }}
                 >
-                  <Typography variant="body1">{message.message}</Typography>
-                  <Typography 
-                    variant="caption" 
-                    sx={{ 
-                      opacity: 0.7,
-                      display: 'block',
-                      mt: 0.5,
+                  {msg.sender === "user" ? "U" : <SmartToy />}
+                </Avatar>
+                <Box sx={{ maxWidth: "70%" }}>
+                  <Paper
+                    elevation={1}
+                    sx={{
+                      p: 2,
+                      borderRadius: 3,
+                      bgcolor:
+                        msg.sender === "user"
+                          ? theme.palette.primary.main
+                          : "#ffffff",
+                      color: msg.sender === "user" ? "#ffffff" : "text.primary",
+                      position: "relative",
+                      "&::before": {
+                        content: '""',
+                        position: "absolute",
+                        width: 0,
+                        height: 0,
+                        borderStyle: "solid",
+                        ...(msg.sender === "user"
+                          ? {
+                              right: -8,
+                              borderWidth: "8px 0 8px 8px",
+                              borderColor: `transparent transparent transparent ${theme.palette.primary.main}`,
+                            }
+                          : {
+                              left: -8,
+                              borderWidth: "8px 8px 8px 0",
+                              borderColor:
+                                "transparent #ffffff transparent transparent",
+                            }),
+                      },
                     }}
                   >
-                    {new Date(message.timestamp).toLocaleTimeString()}
+                    <Typography variant="body1">{msg.text}</Typography>
+                  </Paper>
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      display: "block",
+                      mt: 0.5,
+                      textAlign: msg.sender === "user" ? "right" : "left",
+                      color: "text.secondary",
+                    }}
+                  >
+                    {formatTime(msg.timestamp)}
                   </Typography>
-                  
-                  {/* Rating interface for bot messages */}
-                  {message.sender === 'BOT' && (
-                    <Box sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Typography variant="caption" sx={{ opacity: 0.7 }}>
-                        Rate this response:
-                      </Typography>
-                      <Rating
-                        size="small"
-                        value={ratings[message.id] || 0}
-                        onChange={(event, newValue) => {
-                          if (newValue !== null) {
-                            handleRating(message.id, newValue);
-                          }
-                        }}
-                        sx={{ '& .MuiRating-iconFilled': { color: '#ff9800' } }}
-                      />
-                      <Tooltip title="This was helpful">
-                        <IconButton
-                          size="small"
-                          onClick={() => handleQuickRating(message.id, true)}
-                          sx={{ 
-                            color: ratings[message.id] === 5 ? '#4caf50' : 'grey.400',
-                            '&:hover': { color: '#4caf50' }
-                          }}
-                        >
-                          <ThumbUp fontSize="small" />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="This was not helpful">
-                        <IconButton
-                          size="small"
-                          onClick={() => handleQuickRating(message.id, false)}
-                          sx={{ 
-                            color: ratings[message.id] === 1 ? '#f44336' : 'grey.400',
-                            '&:hover': { color: '#f44336' }
-                          }}
-                        >
-                          <ThumbDown fontSize="small" />
-                        </IconButton>
-                      </Tooltip>
-                    </Box>
-                  )}
                 </Box>
-              </ListItem>
-            ))}
-            {loading && (
-              <ListItem>
-                <Avatar sx={{ bgcolor: '#4caf50', mr: 1 }}>
-                  <SmartToy />
-                </Avatar>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <CircularProgress size={20} />
-                  <Typography sx={{ ml: 2 }}>AI is typing...</Typography>
-                </Box>
-              </ListItem>
-            )}
-          </List>
+              </Box>
+            </Fade>
+          ))}
+          {isTyping && (
+            <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+              <Avatar sx={{ bgcolor: theme.palette.secondary.main }}>
+                <SmartToy />
+              </Avatar>
+              <Paper
+                elevation={1}
+                sx={{
+                  p: 2,
+                  borderRadius: 3,
+                  display: "flex",
+                  gap: 1,
+                  alignItems: "center",
+                }}
+              >
+                <CircularProgress size={20} />
+                <Typography>Thinking...</Typography>
+              </Paper>
+            </Box>
+          )}
           <div ref={messagesEndRef} />
         </Box>
 
-        <Box sx={{ p: 2, borderTop: 1, borderColor: 'divider' }}>
-          <Box sx={{ display: 'flex', gap: 1 }}>
+        {/* Input Container */}
+        <Box
+          sx={{
+            p: 2,
+            borderTop: "1px solid",
+            borderColor: "divider",
+            bgcolor: "#ffffff",
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              gap: 1,
+              alignItems: "center",
+              bgcolor: "#f8fafc",
+              borderRadius: 3,
+              p: 1,
+              boxShadow: "inset 0 2px 4px rgba(0,0,0,0.05)",
+            }}
+          >
             <TextField
               fullWidth
               multiline
-              maxRows={3}
-              placeholder="Type your message..."
-              value={inputMessage}
-              onChange={(e) => setInputMessage(e.target.value)}
+              maxRows={4}
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
               onKeyPress={handleKeyPress}
-              disabled={loading}
+              placeholder="Type your message..."
+              variant="standard"
+              InputProps={{
+                disableUnderline: true,
+                sx: {
+                  p: 1,
+                  "& textarea": {
+                    transition: "all 0.2s ease-in-out",
+                    "&:focus": {
+                      transform: "translateY(-1px)",
+                    },
+                  },
+                },
+              }}
             />
-            <Button
-              variant="contained"
-              onClick={sendMessage}
-              disabled={loading || !inputMessage.trim()}
-              sx={{ minWidth: 'auto', px: 2 }}
+            <IconButton
+              color="primary"
+              onClick={handleSend}
+              disabled={!message.trim() || isTyping}
+              sx={{
+                bgcolor: theme.palette.primary.main,
+                color: "#ffffff",
+                "&:hover": {
+                  bgcolor: theme.palette.primary.dark,
+                  transform: "translateY(-1px)",
+                  boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+                },
+                "&:disabled": {
+                  bgcolor: theme.palette.action.disabledBackground,
+                },
+              }}
             >
               <Send />
-            </Button>
+            </IconButton>
           </Box>
         </Box>
       </Paper>
+
+      <Snackbar
+        open={!!error}
+        autoHideDuration={6000}
+        onClose={() => setError("")}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert onClose={() => setError("")} severity="error" variant="filled">
+          {error}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
 
-export default Chat; 
+export default Chat;
