@@ -2,11 +2,11 @@ import { createTheme } from "@mui/material/styles";
 
 const theme = createTheme({
   palette: {
-    mode: "light",
+    mode: "dark",
     primary: {
-      main: "#6366f1", // Indigo
-      light: "#818cf8",
-      dark: "#4f46e5",
+      main: "#8b5cf6", // Purple
+      light: "#a78bfa",
+      dark: "#7c3aed",
       contrastText: "#ffffff",
     },
     secondary: {
@@ -16,14 +16,14 @@ const theme = createTheme({
       contrastText: "#ffffff",
     },
     background: {
-      default: "#f8fafc",
-      paper: "#ffffff",
+      default: "#0f172a", // Dark blue
+      paper: "#1e293b",
       gradient:
-        "linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(236, 72, 153, 0.1) 100%)",
+        "linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(236, 72, 153, 0.1) 100%)",
     },
     text: {
-      primary: "#1e293b",
-      secondary: "#64748b",
+      primary: "#f1f5f9",
+      secondary: "#94a3b8",
     },
     success: {
       main: "#10b981",
@@ -121,9 +121,9 @@ const theme = createTheme({
     MuiCssBaseline: {
       styleOverrides: {
         body: {
-          backgroundColor: "#f8fafc",
+          backgroundColor: "#0f172a",
           backgroundImage:
-            "linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(236, 72, 153, 0.1) 100%)",
+            "linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(236, 72, 153, 0.05) 100%)",
           backgroundAttachment: "fixed",
         },
       },
@@ -131,9 +131,9 @@ const theme = createTheme({
     MuiAppBar: {
       styleOverrides: {
         root: {
-          backgroundColor: "rgba(255, 255, 255, 0.8)",
+          backgroundColor: "rgba(30, 41, 59, 0.8)",
           backdropFilter: "blur(12px)",
-          borderBottom: "1px solid rgba(0, 0, 0, 0.05)",
+          borderBottom: "1px solid rgba(255, 255, 255, 0.05)",
           boxShadow: "none",
         },
       },
@@ -141,28 +141,29 @@ const theme = createTheme({
     MuiDrawer: {
       styleOverrides: {
         paper: {
-          backgroundColor: "rgba(255, 255, 255, 0.9)",
+          backgroundColor: "rgba(30, 41, 59, 0.9)",
           backdropFilter: "blur(12px)",
           border: "none",
           boxShadow:
-            "0px 4px 6px -1px rgba(0, 0, 0, 0.1), 0px 2px 4px -1px rgba(0, 0, 0, 0.06)",
+            "0px 4px 6px -1px rgba(0, 0, 0, 0.2), 0px 2px 4px -1px rgba(0, 0, 0, 0.1)",
         },
       },
     },
     MuiCard: {
       styleOverrides: {
         root: {
-          backgroundColor: "rgba(255, 255, 255, 0.9)",
+          backgroundColor: "rgba(30, 41, 59, 0.9)",
           backdropFilter: "blur(12px)",
           borderRadius: 16,
-          border: "1px solid rgba(0, 0, 0, 0.05)",
+          border: "1px solid rgba(255, 255, 255, 0.05)",
           boxShadow:
-            "0px 4px 6px -1px rgba(0, 0, 0, 0.1), 0px 2px 4px -1px rgba(0, 0, 0, 0.06)",
+            "0px 4px 6px -1px rgba(0, 0, 0, 0.2), 0px 2px 4px -1px rgba(0, 0, 0, 0.1)",
           transition: "all 0.2s ease-in-out",
           "&:hover": {
             transform: "translateY(-4px)",
             boxShadow:
-              "0px 20px 25px -5px rgba(0, 0, 0, 0.1), 0px 10px 10px -5px rgba(0, 0, 0, 0.04)",
+              "0px 20px 25px -5px rgba(0, 0, 0, 0.2), 0px 10px 10px -5px rgba(0, 0, 0, 0.1)",
+            borderColor: "rgba(139, 92, 246, 0.3)",
           },
         },
       },

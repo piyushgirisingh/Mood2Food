@@ -17,7 +17,7 @@ import GlowingBorder from "../components/GlowingBorder";
 import { chatAPI } from "../services/api";
 import { useAuth } from "../contexts/AuthContext";
 
-const Chat = () => {
+const Chat = ({ onClose }) => {
   const theme = useTheme();
   const { user } = useAuth();
   const [message, setMessage] = useState("");
@@ -131,12 +131,14 @@ const Chat = () => {
   return (
     <Box
       sx={{
-        height: "calc(100vh - 100px)",
+        height: "100%",
         display: "flex",
         flexDirection: "column",
         gap: 2,
-        p: 3,
+        p: 2,
         position: "relative",
+        bgcolor: "background.paper",
+        borderRadius: 0,
       }}
     >
       <GlowingBorder isActive={glowActive} />
@@ -164,7 +166,7 @@ const Chat = () => {
             display: "flex",
             flexDirection: "column",
             gap: 2,
-            bgcolor: "#f8fafc",
+            bgcolor: theme.palette.background.default,
           }}
         >
           {messages.map((msg, index) => (
@@ -197,8 +199,11 @@ const Chat = () => {
                       bgcolor:
                         msg.sender === "user"
                           ? theme.palette.primary.main
-                          : "#ffffff",
-                      color: msg.sender === "user" ? "#ffffff" : "text.primary",
+                          : theme.palette.background.paper,
+                      color:
+                        msg.sender === "user"
+                          ? "#ffffff"
+                          : theme.palette.text.primary,
                       position: "relative",
                       "&::before": {
                         content: '""',
@@ -267,7 +272,7 @@ const Chat = () => {
             p: 2,
             borderTop: "1px solid",
             borderColor: "divider",
-            bgcolor: "#ffffff",
+            bgcolor: theme.palette.background.paper,
           }}
         >
           <Box
@@ -275,7 +280,7 @@ const Chat = () => {
               display: "flex",
               gap: 1,
               alignItems: "center",
-              bgcolor: "#f8fafc",
+              bgcolor: theme.palette.background.default,
               borderRadius: 3,
               p: 1,
               boxShadow: "inset 0 2px 4px rgba(0,0,0,0.05)",

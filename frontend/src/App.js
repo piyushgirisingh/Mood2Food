@@ -1,5 +1,10 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import { ThemeProvider, CssBaseline } from "@mui/material";
 import theme from "./theme";
 import Login from "./pages/Login";
@@ -10,7 +15,8 @@ import CopingTools from "./pages/CopingTools";
 import Insights from "./pages/Insights";
 import TriggerLogs from "./pages/TriggerLogs";
 import ProtectedRoute from "./components/ProtectedRoute";
-import Layout from "./components/Layout";
+import ScrollingLayout from "./components/ScrollingLayout";
+
 import { AuthProvider } from "./contexts/AuthContext";
 
 function App() {
@@ -23,22 +29,20 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route
-              path="/dashboard"
+              path="/chat"
               element={
                 <ProtectedRoute>
-                  <Layout>
-                    <Dashboard />
-                  </Layout>
+                  <Chat />
                 </ProtectedRoute>
               }
             />
             <Route
-              path="/chat"
+              path="/dashboard"
               element={
                 <ProtectedRoute>
-                  <Layout>
-                    <Chat />
-                  </Layout>
+                  <ScrollingLayout>
+                    <Dashboard />
+                  </ScrollingLayout>
                 </ProtectedRoute>
               }
             />
@@ -46,9 +50,9 @@ function App() {
               path="/coping-tools"
               element={
                 <ProtectedRoute>
-                  <Layout>
+                  <ScrollingLayout>
                     <CopingTools />
-                  </Layout>
+                  </ScrollingLayout>
                 </ProtectedRoute>
               }
             />
@@ -56,9 +60,9 @@ function App() {
               path="/insights"
               element={
                 <ProtectedRoute>
-                  <Layout>
+                  <ScrollingLayout>
                     <Insights />
-                  </Layout>
+                  </ScrollingLayout>
                 </ProtectedRoute>
               }
             />
@@ -66,13 +70,13 @@ function App() {
               path="/trigger-logs"
               element={
                 <ProtectedRoute>
-                  <Layout>
+                  <ScrollingLayout>
                     <TriggerLogs />
-                  </Layout>
+                  </ScrollingLayout>
                 </ProtectedRoute>
               }
             />
-            <Route path="/" element={<Login />} />
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         </Router>
       </AuthProvider>
