@@ -12,13 +12,13 @@ RUN npm ci --only=production
 # Copy source code
 COPY . .
 
-# Build the app
+# Build the application
 RUN npm run build
 
 # Production stage
 FROM nginx:alpine
 
-# Copy built app to nginx
+# Copy built files from build stage
 COPY --from=build /app/build /usr/share/nginx/html
 
 # Copy nginx configuration

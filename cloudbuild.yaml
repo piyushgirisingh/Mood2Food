@@ -2,11 +2,90 @@ options:
   logging: CLOUD_LOGGING_ONLY
 
 steps:
+  # Build and deploy ML service
   - name: 'gcr.io/cloud-builders/docker'
     dir: 'MachineLearning'
-    args: ['build', '-t', 'gcr.io/$PROJECT_ID/mood2food-image', '.']
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/mood2food-ml', '.']
+  
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/$PROJECT_ID/mood2food-image']
+    args: ['push', 'gcr.io/$PROJECT_ID/mood2food-ml']
+  
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'mood2food-ml'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/mood2food-ml'
+      - '--region'
+      - 'us-central1'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+      - '--port'
+      - '5000'
+      - '--memory'
+      - '2Gi'
+      - '--cpu'
+      - '2'
+
+  # Build and deploy Backend service
+  - name: 'gcr.io/cloud-builders/docker'
+    dir: 'backend'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/mood2food-backend', '.']
+  
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/mood2food-backend']
+  
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'mood2food-backend'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/mood2food-backend'
+      - '--region'
+      - 'us-central1'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+      - '--port'
+      - '8080'
+      - '--memory'
+      - '1Gi'
+      - '--cpu'
+      - '1'
+      - '--set-env-vars'
+      - 'ML_BACKEND_URL=https://mood2food-ml-xxxxxxxx-uc.a.run.app/classify-emotion'
+
+  # Build and deploy Frontend service
+  - name: 'gcr.io/cloud-builders/docker'
+    dir: 'frontend'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/mood2food-frontend', '.']
+  
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/mood2food-frontend']
+  
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'mood2food-frontend'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/mood2food-frontend'
+      - '--region'
+      - 'us-central1'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+      - '--port'
+      - '80'
+      - '--memory'
+      - '512Mi'
+      - '--cpu'
+      - '1'
 
 images:
-  - 'gcr.io/$PROJECT_ID/mood2food-image'
+  - 'gcr.io/$PROJECT_ID/mood2food-ml'
+  - 'gcr.io/$PROJECT_ID/mood2food-backend'
+  - 'gcr.io/$PROJECT_ID/mood2food-frontend'
