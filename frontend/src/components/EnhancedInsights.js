@@ -257,39 +257,7 @@ const EnhancedInsights = () => {
         </Card>
       )}
 
-      {/* Emotional Eating Frequency */}
-      <Card sx={{ mb: 2 }}>
-        <CardContent>
-          <Typography variant="h6" mb={2}>
-            <Psychology sx={{ mr: 1, verticalAlign: "middle" }} />
-            Emotional Eating Pattern
-          </Typography>
 
-          <Box mb={2}>
-            <Box display="flex" justifyContent="space-between" mb={1}>
-              <Typography variant="body2">
-                Emotional Eating Frequency
-              </Typography>
-              <Typography variant="body2">
-                {patterns.emotionalEatingFrequency.toFixed(1)}%
-              </Typography>
-            </Box>
-            <LinearProgress
-              variant="determinate"
-              value={patterns.emotionalEatingFrequency}
-              sx={{ height: 8, borderRadius: 4 }}
-            />
-          </Box>
-
-          <Typography variant="body2" color="text.secondary">
-            {patterns.emotionalEatingFrequency > 70
-              ? "You're experiencing high levels of emotional eating. Consider reaching out for support."
-              : patterns.emotionalEatingFrequency > 40
-              ? "Moderate emotional eating detected. Focus on developing healthy coping strategies."
-              : "Great job! You're mostly eating in response to physical hunger."}
-          </Typography>
-        </CardContent>
-      </Card>
 
       {/* Common Triggers */}
       {patterns.commonTriggers.length > 0 && (
@@ -407,28 +375,7 @@ const EnhancedInsights = () => {
         </Card>
       )}
 
-      {/* Recent Insights */}
-      {insights && insights.length > 0 && (
-        <Card>
-          <CardContent>
-            <Typography variant="h6" mb={2}>
-              <Timeline sx={{ mr: 1, verticalAlign: "middle" }} />
-              Recent Insights
-            </Typography>
 
-            <List>
-              {insights.slice(0, 3).map((insight, index) => (
-                <ListItem key={index}>
-                  <ListItemText
-                    primary={insight.message}
-                    secondary={new Date(insight.timestamp).toLocaleDateString()}
-                  />
-                </ListItem>
-              ))}
-            </List>
-          </CardContent>
-        </Card>
-      )}
     </Box>
   );
 };

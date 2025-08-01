@@ -16,6 +16,14 @@ import {
   Divider,
   Button,
   Stack,
+  Drawer,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Card,
+  CardContent,
+  Chip,
 } from "@mui/material";
 import {
   Chat as ChatIcon,
@@ -23,6 +31,14 @@ import {
   Notifications,
   NightsStay,
   WbSunny,
+  Dashboard,
+  Psychology,
+  Insights,
+  Restaurant,
+  Timer,
+  TrendingUp,
+  EmojiEvents,
+  Lightbulb,
 } from "@mui/icons-material";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
@@ -49,6 +65,14 @@ const ScrollingLayout = ({ children }) => {
     { path: "/", title: "Dashboard" },
     { path: "/coping-tools", title: "Coping Tools" },
     { path: "/insights", title: "Insights" },
+  ];
+
+  const sidebarItems = [
+    { icon: <Dashboard />, text: "Quick Stats", action: () => navigate("/dashboard") },
+    { icon: <Restaurant />, text: "Log Food", action: () => navigate("/dashboard") },
+    { icon: <Psychology />, text: "Coping Tools", action: () => navigate("/coping-tools") },
+    { icon: <Insights />, text: "View Insights", action: () => navigate("/insights") },
+    { icon: <Timer />, text: "Mindful Timer", action: () => navigate("/coping-tools") },
   ];
 
   const handleMenuOpen = (event) => {
@@ -278,11 +302,115 @@ const ScrollingLayout = ({ children }) => {
         <MenuItem>System update completed</MenuItem>
       </Menu>
 
+      {/* Sidebar */}
+      <Drawer
+        variant="permanent"
+        sx={{
+          width: 280,
+          flexShrink: 0,
+          "& .MuiDrawer-paper": {
+            width: 280,
+            boxSizing: "border-box",
+            borderRight: "none",
+            bgcolor: "background.paper",
+            boxShadow: "2px 0 8px rgba(0,0,0,0.1)",
+          },
+        }}
+      >
+        <Box sx={{ mt: 8, p: 2 }}>
+          {/* Quick Actions */}
+          <Card sx={{ mb: 3, bgcolor: "background.default" }}>
+            <CardContent sx={{ p: 2 }}>
+              <Typography variant="h6" sx={{ mb: 2, display: "flex", alignItems: "center", gap: 1 }}>
+                <Lightbulb color="primary" />
+                Quick Actions
+              </Typography>
+              <List dense>
+                {sidebarItems.map((item, index) => (
+                  <ListItem
+                    key={index}
+                    button
+                    onClick={item.action}
+                    sx={{
+                      borderRadius: 1,
+                      mb: 0.5,
+                      "&:hover": {
+                        bgcolor: "primary.light",
+                        color: "primary.main",
+                      },
+                    }}
+                  >
+                    <ListItemIcon sx={{ minWidth: 36, color: "inherit" }}>
+                      {item.icon}
+                    </ListItemIcon>
+                    <ListItemText primary={item.text} />
+                  </ListItem>
+                ))}
+              </List>
+            </CardContent>
+          </Card>
+
+          {/* Today's Progress */}
+          <Card sx={{ mb: 3, bgcolor: "background.default" }}>
+            <CardContent sx={{ p: 2 }}>
+              <Typography variant="h6" sx={{ mb: 2, display: "flex", alignItems: "center", gap: 1 }}>
+                <TrendingUp color="primary" />
+                Today's Progress
+              </Typography>
+              <Box sx={{ mb: 2 }}>
+                <Typography variant="body2" color="text.secondary">
+                  Food Entries
+                </Typography>
+                <Typography variant="h4" color="primary">
+                  3
+                </Typography>
+              </Box>
+              <Box sx={{ mb: 2 }}>
+                <Typography variant="body2" color="text.secondary">
+                  Coping Strategies Used
+                </Typography>
+                <Typography variant="h4" color="secondary">
+                  2
+                </Typography>
+              </Box>
+              <Box>
+                <Typography variant="body2" color="text.secondary">
+                  Current Streak
+                </Typography>
+                <Typography variant="h4" sx={{ color: "success.main" }}>
+                  5 days
+                </Typography>
+              </Box>
+            </CardContent>
+          </Card>
+
+          {/* Quick Tips */}
+          <Card sx={{ bgcolor: "background.default" }}>
+            <CardContent sx={{ p: 2 }}>
+              <Typography variant="h6" sx={{ mb: 2, display: "flex", alignItems: "center", gap: 1 }}>
+                <EmojiEvents color="primary" />
+                Daily Tip
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                Try the 5-minute rule: wait 5 minutes before giving in to emotional eating urges.
+              </Typography>
+              <Chip
+                label="Mindful Eating"
+                size="small"
+                color="primary"
+                variant="outlined"
+              />
+            </CardContent>
+          </Card>
+        </Box>
+      </Drawer>
+
       <Box
         component="main"
         sx={{
           pt: 10,
-          px: 3,
+          pl: 35, // Account for sidebar width (280px + padding)
+          pr: 3,
           minHeight: "100vh",
           display: "flex",
           flexDirection: "column",

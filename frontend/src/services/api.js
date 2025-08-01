@@ -1,10 +1,12 @@
 import axios from 'axios';
 
-// Create axios instance with base configuration
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
+// Environment variables for backend and ML URLs
+const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080';
+const mlUrl = import.meta.env.VITE_ML_URL || 'http://localhost:10000';
 
+// Create axios instance with base configuration
 const api = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: backendUrl,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -93,6 +95,59 @@ export const foodLogAPI = {
 export const foodInsightsAPI = {
   getEmotionalEatingPatterns: () => api.get('/api/food-insights/patterns'),
   getRecentFoodInsights: () => api.get('/api/food-insights/recent'),
+};
+
+// ML API - Direct calls to ML service
+export const mlAPI = {
+  classifyEmotion: async (reason) => {
+    const res = await fetch(`${mlUrl}/classify-emotion`, {
+      method: "POST",
+      body: JSON.stringify({ reason }),
+      headers: { "Content-Type": "application/json" }
+    });
+    return res.json();
+  },
+  
+  getUserPatterns: async (userId) => {
+    const res = await fetch(`${mlUrl}/user-patterns/${userId}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" }
+    });
+    return res.json();
+  },
+  
+  sendFeedback: async (feedbackData) => {
+    const res = await fetch(`${mlUrl}/feedback`, {
+      method: "POST",
+      body: JSON.stringify(feedbackData),
+      headers: { "Content-Type": "application/json" }
+    });
+    return res.json();
+  },
+  
+  getLearningStats: async (userId) => {
+    const res = await fetch(`${mlUrl}/learning-stats/${userId}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" }
+    });
+    return res.json();
+  },
+  
+  getRandomFact: async () => {
+    const res = await fetch(`${mlUrl}/fun-facts/random`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" }
+    });
+    return res.json();
+  },
+  
+  getFactOfTheDay: async () => {
+    const res = await fetch(`${mlUrl}/fun-facts/daily`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" }
+    });
+    return res.json();
+  }
 };
 
 export default api; 

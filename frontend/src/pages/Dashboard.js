@@ -16,15 +16,15 @@ import {
   TrendingUp,
   Psychology,
 } from "@mui/icons-material";
-import { dashboardAPI } from "../services/api";
+import { dashboardAPI, mlAPI } from "../services/api";
 import FoodLogForm from "../components/FoodLogForm";
 import TodayFoodLogs from "../components/TodayFoodLogs";
-import FoodInsights from "../components/FoodInsights";
-import CopingStrategies from "../components/CopingStrategies";
+
+
 import EnhancedInsights from "../components/EnhancedInsights";
-import MindfulEatingTimer from "../components/MindfulEatingTimer";
-import CrisisIntervention from "../components/CrisisIntervention";
-import ProgressCelebration from "../components/ProgressCelebration";
+
+
+
 
 const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
@@ -134,14 +134,36 @@ const Dashboard = () => {
     return () => clearInterval(timer);
   }, [currentFactIndex, funFacts]);
 
-  const setFunFactOfTheDay = () => {
-    const today = new Date();
-    const dayOfYear = Math.floor(
-      (today - new Date(today.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24)
-    );
-    const factIndex = dayOfYear % funFacts.length;
-    setFunFact(funFacts[factIndex]);
-    setCurrentFactIndex(factIndex);
+  const setFunFactOfTheDay = async () => {
+    try {
+      const response = await mlAPI.getFactOfTheDay();
+      if (response.success && response.fact) {
+        setFunFact({
+          fact: response.fact,
+          category: "Daily Tip",
+          tip: "This fact is personalized for your emotional eating journey."
+        });
+      } else {
+        // Fallback to hardcoded facts
+        const today = new Date();
+        const dayOfYear = Math.floor(
+          (today - new Date(today.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24)
+        );
+        const factIndex = dayOfYear % funFacts.length;
+        setFunFact(funFacts[factIndex]);
+        setCurrentFactIndex(factIndex);
+      }
+    } catch (error) {
+      console.error("Error fetching fun fact:", error);
+      // Fallback to hardcoded facts
+      const today = new Date();
+      const dayOfYear = Math.floor(
+        (today - new Date(today.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24)
+      );
+      const factIndex = dayOfYear % funFacts.length;
+      setFunFact(funFacts[factIndex]);
+      setCurrentFactIndex(factIndex);
+    }
   };
 
   const loadDashboardData = async () => {
@@ -180,28 +202,26 @@ const Dashboard = () => {
   return (
     <Box sx={{ py: 3, width: "100%" }}>
       {/* Header Section */}
-      <Box mb={4}>
-        <Box display="flex" alignItems="center" mb={2}>
-          <Typography variant="h4" sx={{ color: "#F8FAFC", fontWeight: 700 }}>
-            Dashboard
-          </Typography>
-        </Box>
+      <Box mb={3}>
+        <Typography variant="h4" sx={{ color: "#F8FAFC", fontWeight: 700, mb: 1 }}>
+          Dashboard
+        </Typography>
         <Typography variant="h6" sx={{ color: "#CBD5E1", fontWeight: 400 }}>
           Welcome back! Here's your progress overview.
         </Typography>
       </Box>
 
-      {/* Top Row - Fun Facts & Crisis Intervention */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
+      {/* Top Row - Fun Facts */}
+      <Grid container spacing={3} sx={{ mb: 3 }}>
         {/* Fun Facts Card */}
-        <Grid item xs={12} lg={8}>
+        <Grid item xs={12}>
           {funFact && (
             <Card
               sx={{
-                background: "linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%)",
+                background: "linear-gradient(135deg, #1E293B 0%, #334155 100%)",
                 color: "white",
                 borderRadius: 3,
-                boxShadow: "0 8px 32px rgba(139, 92, 246, 0.3)",
+                boxShadow: "0 8px 32px rgba(30, 41, 59, 0.3)",
                 height: "fit-content",
               }}
             >
@@ -263,76 +283,49 @@ const Dashboard = () => {
             </Card>
           )}
         </Grid>
-
-        {/* Crisis Intervention */}
-        <Grid item xs={12} lg={4}>
-          <CrisisIntervention />
-        </Grid>
       </Grid>
 
-      {/* Main Content Grid */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
-        {/* Left Column - Core Features */}
-        <Grid item xs={12} lg={8}>
-          <Grid container spacing={3}>
-            {/* Food Logging Section */}
-            <Grid item xs={12}>
-              <Card
-                sx={{
-                  background: "linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%)",
-                  color: "white",
-                  borderRadius: 3,
-                  boxShadow: "0 8px 32px rgba(245, 158, 11, 0.3)",
-                }}
-              >
-                <CardContent sx={{ p: 3 }}>
-                  <Box display="flex" alignItems="center" mb={2}>
-                    <Restaurant sx={{ fontSize: 28, color: "#fff", mr: 1 }} />
-                    <Typography variant="h5" fontWeight="bold">
-                      Food & Mood Tracking
-                    </Typography>
-                  </Box>
-                  <Typography variant="body1" sx={{ opacity: 0.9, mb: 3 }}>
-                    Track what you eat, when you eat it, and how you feel. This
-                    helps you become more aware of your eating habits and
-                    emotional patterns.
-                  </Typography>
-                  <Box display="flex" justifyContent="center">
-                    <FoodLogForm
-                      onFoodLogAdded={() =>
-                        setRefreshFoodLogs((prev) => prev + 1)
-                      }
-                    />
-                  </Box>
-                </CardContent>
-              </Card>
-            </Grid>
-
-            {/* Food Logs & Insights Row */}
-            <Grid item xs={12} md={6}>
-              <TodayFoodLogs refreshTrigger={refreshFoodLogs} />
-            </Grid>
-
-            <Grid item xs={12} md={6}>
-              <FoodInsights />
-            </Grid>
-          </Grid>
+      {/* Main Content - Two Column Layout */}
+      <Grid container spacing={3}>
+        {/* Left Column - Food Tracking */}
+        <Grid item xs={12} md={6}>
+          <Card
+            sx={{
+              background: "linear-gradient(135deg, #1E293B 0%, #334155 100%)",
+              color: "white",
+              borderRadius: 3,
+              boxShadow: "0 8px 32px rgba(30, 41, 59, 0.3)",
+              height: "100%",
+              minHeight: "400px",
+            }}
+          >
+            <CardContent sx={{ p: 4, height: "100%", display: "flex", flexDirection: "column" }}>
+              <Box display="flex" alignItems="center" mb={3}>
+                <Restaurant sx={{ fontSize: 32, color: "#FBBF24", mr: 2 }} />
+                <Typography variant="h5" fontWeight="bold">
+                  Food & Mood Tracking
+                </Typography>
+              </Box>
+              <Typography variant="body1" sx={{ opacity: 0.9, mb: 4, lineHeight: 1.6 }}>
+                Track what you eat, when you eat it, and how you feel. This helps you become more aware of your eating habits and emotional patterns.
+              </Typography>
+              <Box sx={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <FoodLogForm
+                  onFoodLogAdded={() =>
+                    setRefreshFoodLogs((prev) => prev + 1)
+                  }
+                />
+              </Box>
+            </CardContent>
+          </Card>
         </Grid>
 
-        {/* Right Column - Quick Tools */}
-        <Grid item xs={12} lg={4}>
+        {/* Right Column - Insights & Logs */}
+        <Grid item xs={12} md={6}>
           <Grid container spacing={3}>
-            {/* Coping Strategies */}
             <Grid item xs={12}>
-              <CopingStrategies />
+              <TodayFoodLogs refreshTrigger={refreshFoodLogs} />
             </Grid>
-
-            {/* Mindful Eating Timer */}
-            <Grid item xs={12}>
-              <MindfulEatingTimer />
-            </Grid>
-
-            {/* Enhanced Insights */}
             <Grid item xs={12}>
               <EnhancedInsights />
             </Grid>
@@ -340,12 +333,7 @@ const Dashboard = () => {
         </Grid>
       </Grid>
 
-      {/* Bottom Section - Progress Celebration */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid item xs={12}>
-          <ProgressCelebration />
-        </Grid>
-      </Grid>
+
 
       {/* Recent Activity - Only show if data exists */}
       {dashboardData?.recentActivity && (
@@ -353,6 +341,7 @@ const Dashboard = () => {
           sx={{
             borderRadius: 3,
             background: "linear-gradient(135deg, #1E293B 0%, #334155 100%)",
+            mt: 3,
           }}
         >
           <CardContent sx={{ p: 3 }}>
