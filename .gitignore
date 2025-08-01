@@ -74,4 +74,4 @@ node_modules/.cache
 ### Build artifacts ###
 frontend/build/
 backend/target/classes/static/*.pyc
-venv/
+venv/venv/
