@@ -9,4 +9,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 ENV PORT=10000
 EXPOSE $PORT
 
-CMD ["flask", "run", "--host=0.0.0.0", "--port=$PORT"]
+CMD ["python", "app.py"]

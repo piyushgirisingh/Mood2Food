@@ -941,5 +941,5 @@ def get_fact_stats():
         }), 500
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))
+    port = int(os.environ.get("PORT", 10000))  # ← get port from env
     app.run(host="0.0.0.0", port=port)
