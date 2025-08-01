@@ -17,3 +17,11 @@ timestamp,text,emotion,confidence,user_id
 2025-07-30T00:53:06.260414,I am angry,anger,99.18979406356812,e569c3d0-79e0-4d9f-a920-eeb16d61ea83
 2025-07-30T10:04:13.900593,Hey I drrank coffee cause I didn't sleep properly last night.,sadness,84.83917117118835,645a4522-7558-4891-b356-bea939b38d3a
 2025-07-30T10:04:30.913800,sure,neutral,76.1077344417572,645a4522-7558-4891-b356-bea939b38d3a
+2025-07-30T17:35:03.553793,[Emotional Eating Support Context] Hi,neutral,94.84206438064577,645a4522-7558-4891-b356-bea939b38d3a
+2025-07-30T20:03:23.417602,[Emotional Eating Support Context] yello,neutral,94.4593608379364,a349f89d-78a7-4ec7-bbb4-9ee69c3f952a
+2025-07-30T20:03:35.573784,[Emotional Eating Support Context] Who are you my friend?,neutral,78.88578772544861,a349f89d-78a7-4ec7-bbb4-9ee69c3f952a
+2025-07-30T20:03:54.415712,[Emotional Eating Support Context] what AI agent is this?,neutral,91.90556406974792,a349f89d-78a7-4ec7-bbb4-9ee69c3f952a
+2025-07-30T20:04:14.688776,[Emotional Eating Support Context] are you better than gemini?,neutral,90.46351909637453,a349f89d-78a7-4ec7-bbb4-9ee69c3f952a
+2025-07-30T20:05:16.343133,[Emotional Eating Support Context] I have been eating a lot of food lately. I love sweet food and I do not want to do anything except for eat all day. What does that make me>,joy,53.88962030410767,a349f89d-78a7-4ec7-bbb4-9ee69c3f952a
+2025-07-30T20:15:38.570266,[Emotional Eating Support Context] now tell me what did i eat today?,neutral,94.64033842086792,a349f89d-78a7-4ec7-bbb4-9ee69c3f952a
+2025-07-31T19:49:34.327230,[Emotional Eating Support Context] hi,neutral,95.22000551223755,330cf335-00ac-4974-b159-ad986c4ce2db

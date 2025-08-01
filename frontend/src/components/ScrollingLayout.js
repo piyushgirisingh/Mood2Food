@@ -311,13 +311,19 @@ const ScrollingLayout = ({ children }) => {
           position: "fixed",
           top: 0,
           right: 0,
-          width: "400px",
+          width: {
+            xs: "100vw", // Full width on mobile
+            sm: "80vw",  // 80% width on small screens
+            md: "600px", // Fixed 600px on medium and larger screens
+          },
           height: "100vh",
           bgcolor: "background.paper",
           transform: showChat ? "translateX(0)" : "translateX(100%)",
           transition: "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
           boxShadow: "-4px 0 20px rgba(0, 0, 0, 0.1)",
           zIndex: theme.zIndex.drawer + 1,
+          display: "flex",
+          flexDirection: "column",
         }}
       >
         {showChat && <Chat onClose={() => setShowChat(false)} />}

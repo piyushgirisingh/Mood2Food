@@ -190,7 +190,7 @@ Keep responses under 120 words and actionable."""
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_message}
             ],
-            max_tokens=180,
+            max_tokens=300,
             temperature=0.7
         )
         

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Grid,
   Card,
@@ -8,24 +8,18 @@ import {
   CircularProgress,
   Alert,
   Chip,
-  Container,
-  Divider,
 } from "@mui/material";
 import {
   Lightbulb,
   EmojiEvents,
   Restaurant,
-  Dashboard as DashboardIcon,
   TrendingUp,
   Psychology,
-  Timer,
-  Insights,
 } from "@mui/icons-material";
 import { dashboardAPI } from "../services/api";
 import FoodLogForm from "../components/FoodLogForm";
 import TodayFoodLogs from "../components/TodayFoodLogs";
 import FoodInsights from "../components/FoodInsights";
-import MoodTriggerTracker from "../components/MoodTriggerTracker";
 import CopingStrategies from "../components/CopingStrategies";
 import EnhancedInsights from "../components/EnhancedInsights";
 import MindfulEatingTimer from "../components/MindfulEatingTimer";
@@ -42,7 +36,7 @@ const Dashboard = () => {
   const [timeRemaining, setTimeRemaining] = useState(5);
 
   // Fun facts about emotional eating
-  const funFacts = [
+  const funFacts = useMemo(() => [
     {
       fact: "75% of overeating is caused by emotions, not hunger!",
       category: "Statistics",
@@ -118,7 +112,7 @@ const Dashboard = () => {
       category: "Color Psychology",
       tip: "Try using blue plates or eating in a blue-lit room.",
     },
-  ];
+  ], []);
 
   useEffect(() => {
     loadDashboardData();
@@ -184,11 +178,10 @@ const Dashboard = () => {
   }
 
   return (
-    <Container maxWidth="xl" sx={{ py: 3 }}>
+    <Box sx={{ py: 3, width: "100%" }}>
       {/* Header Section */}
       <Box mb={4}>
         <Box display="flex" alignItems="center" mb={2}>
-          <DashboardIcon sx={{ mr: 2, fontSize: 32, color: "#8B5CF6" }} />
           <Typography variant="h4" sx={{ color: "#F8FAFC", fontWeight: 700 }}>
             Dashboard
           </Typography>
@@ -207,9 +200,9 @@ const Dashboard = () => {
               sx={{
                 background: "linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%)",
                 color: "white",
-                height: "100%",
                 borderRadius: 3,
                 boxShadow: "0 8px 32px rgba(139, 92, 246, 0.3)",
+                height: "fit-content",
               }}
             >
               <CardContent sx={{ p: 3 }}>
@@ -277,17 +270,16 @@ const Dashboard = () => {
         </Grid>
       </Grid>
 
-      {/* Main Features Grid */}
+      {/* Main Content Grid */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
-        {/* Left Column - Core Tools */}
+        {/* Left Column - Core Features */}
         <Grid item xs={12} lg={8}>
           <Grid container spacing={3}>
             {/* Food Logging Section */}
             <Grid item xs={12}>
               <Card
                 sx={{
-                  background:
-                    "linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%)",
+                  background: "linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%)",
                   color: "white",
                   borderRadius: 3,
                   boxShadow: "0 8px 32px rgba(245, 158, 11, 0.3)",
@@ -316,7 +308,7 @@ const Dashboard = () => {
               </Card>
             </Grid>
 
-            {/* Today's Food Logs & Insights */}
+            {/* Food Logs & Insights Row */}
             <Grid item xs={12} md={6}>
               <TodayFoodLogs refreshTrigger={refreshFoodLogs} />
             </Grid>
@@ -348,15 +340,14 @@ const Dashboard = () => {
         </Grid>
       </Grid>
 
-      {/* Bottom Row - Enhanced Features */}
+      {/* Bottom Section - Progress Celebration */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
-        {/* Progress Celebration */}
         <Grid item xs={12}>
           <ProgressCelebration />
         </Grid>
       </Grid>
 
-      {/* Recent Activity */}
+      {/* Recent Activity - Only show if data exists */}
       {dashboardData?.recentActivity && (
         <Card
           sx={{
@@ -380,7 +371,7 @@ const Dashboard = () => {
           </CardContent>
         </Card>
       )}
-    </Container>
+    </Box>
   );
 };
 

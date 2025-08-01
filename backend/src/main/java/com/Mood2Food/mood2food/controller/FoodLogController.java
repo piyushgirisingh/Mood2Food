@@ -4,6 +4,7 @@ import com.Mood2Food.mood2food.dto.FoodLogRequest;
 import com.Mood2Food.mood2food.dto.FoodLogResponse;
 import com.Mood2Food.mood2food.service.FoodLogService;
 import com.Mood2Food.mood2food.util.JwtUtil;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,7 @@ public class FoodLogController {
     // Create a new food log
     @PostMapping
     public ResponseEntity<?> createFoodLog(@RequestHeader("Authorization") String token, 
-                                         @RequestBody FoodLogRequest request) {
+                                         @RequestBody @Valid FoodLogRequest request) {
         try {
             String jwt = token.substring(7); // Remove "Bearer "
             UUID studentId = jwtUtil.extractUserId(jwt);

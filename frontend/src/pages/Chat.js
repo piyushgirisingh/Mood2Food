@@ -11,8 +11,11 @@ import {
   useTheme,
   Alert,
   Snackbar,
+  Rating,
+  Tooltip,
+  Chip,
 } from "@mui/material";
-import { Send, SmartToy } from "@mui/icons-material";
+import { Send, SmartToy, ThumbUp, ThumbDown } from "@mui/icons-material";
 import GlowingBorder from "../components/GlowingBorder";
 import { chatAPI } from "../services/api";
 import { useAuth } from "../contexts/AuthContext";
@@ -25,6 +28,7 @@ const Chat = ({ onClose }) => {
   const [isTyping, setIsTyping] = useState(false);
   const [glowActive, setGlowActive] = useState(false);
   const [error, setError] = useState("");
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState({});
   const messagesEndRef = useRef(null);
 
   // Load chat history on component mount
@@ -44,6 +48,7 @@ const Chat = ({ onClose }) => {
             text: messageParts.join(": "),
             sender: sender.toLowerCase(),
             timestamp: msg.timestamp,
+            id: msg.id,
           };
         });
         setMessages(formattedMessages);
@@ -69,6 +74,7 @@ const Chat = ({ onClose }) => {
       text: message,
       sender: "user",
       timestamp: new Date().toISOString(),
+      id: `user-${Date.now()}`,
     };
 
     setMessages((prev) => [...prev, newMessage]);
@@ -85,6 +91,9 @@ const Chat = ({ onClose }) => {
           text: response.data.reply,
           sender: "bot",
           timestamp: response.data.timestamp || new Date().toISOString(),
+          id: `bot-${Date.now()}`,
+          emotion: response.data.emotion,
+          confidence: response.data.confidence,
         };
         setMessages((prev) => [...prev, botMessage]);
       }
@@ -96,6 +105,39 @@ const Chat = ({ onClose }) => {
     } finally {
       setIsTyping(false);
       setTimeout(() => setGlowActive(false), 1000);
+    }
+  };
+
+  const handleFeedback = async (messageId, rating, feedbackText = "") => {
+    try {
+      const message = messages.find(msg => msg.id === messageId);
+      if (!message || message.sender !== "bot") return;
+
+      // Find the user message that preceded this bot response
+      const messageIndex = messages.findIndex(msg => msg.id === messageId);
+      const userMessage = messageIndex > 0 ? messages[messageIndex - 1] : null;
+
+      if (userMessage && userMessage.sender === "user") {
+        await chatAPI.sendFeedback({
+          user_id: user.id,
+          message: userMessage.text,
+          response: message.text,
+          emotion: message.emotion || "neutral",
+          rating: rating,
+          feedback_text: feedbackText,
+        });
+
+        setFeedbackSubmitted(prev => ({ ...prev, [messageId]: rating }));
+        
+        // Show success message
+        setError(""); // Clear any existing errors
+        setTimeout(() => {
+          // You could show a success snackbar here if needed
+        }, 100);
+      }
+    } catch (err) {
+      console.error("Error submitting feedback:", err);
+      setError("Failed to submit feedback. Please try again.");
     }
   };
 
@@ -141,6 +183,8 @@ const Chat = ({ onClose }) => {
         position: "relative",
         bgcolor: "background.paper",
         borderRadius: 0,
+        width: "100%", // Make chat take full width
+        maxWidth: "100%", // Ensure it doesn't overflow
       }}
     >
       <GlowingBorder isActive={glowActive} />
@@ -157,6 +201,7 @@ const Chat = ({ onClose }) => {
           border: "1px solid",
           borderColor: "divider",
           position: "relative",
+          width: "100%", // Full width
         }}
       >
         {/* Messages Container */}
@@ -179,6 +224,7 @@ const Chat = ({ onClose }) => {
                   flexDirection: msg.sender === "user" ? "row-reverse" : "row",
                   gap: 1,
                   alignItems: "flex-start",
+                  width: "100%", // Full width for message container
                 }}
               >
                 <Avatar
@@ -188,11 +234,18 @@ const Chat = ({ onClose }) => {
                         ? theme.palette.primary.main
                         : theme.palette.secondary.main,
                     boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+                    flexShrink: 0, // Prevent avatar from shrinking
                   }}
                 >
                   {msg.sender === "user" ? "U" : <SmartToy />}
                 </Avatar>
-                <Box sx={{ maxWidth: "70%" }}>
+                <Box 
+                  sx={{ 
+                    maxWidth: "75%", // Increased from 70% to 75%
+                    minWidth: "200px", // Minimum width for messages
+                    flex: 1, // Allow box to grow
+                  }}
+                >
                   <Paper
                     elevation={1}
                     sx={{
@@ -207,6 +260,8 @@ const Chat = ({ onClose }) => {
                           ? "#ffffff"
                           : theme.palette.text.primary,
                       position: "relative",
+                      width: "100%", // Full width within container
+                      wordWrap: "break-word", // Handle long text
                       "&::before": {
                         content: '""',
                         position: "absolute",
@@ -228,7 +283,83 @@ const Chat = ({ onClose }) => {
                       },
                     }}
                   >
-                    <Typography variant="body1">{msg.text}</Typography>
+                    <Typography variant="body1" sx={{ wordBreak: "break-word" }}>
+                      {msg.text}
+                    </Typography>
+                    
+                    {/* Feedback Section for Bot Messages */}
+                    {msg.sender === "bot" && (
+                      <Box 
+                        sx={{ 
+                          mt: 2, 
+                          display: "flex", 
+                          alignItems: "center", 
+                          gap: 1,
+                          flexWrap: "wrap", // Allow wrapping on small screens
+                          width: "100%", // Full width
+                        }}
+                      >
+                        {feedbackSubmitted[msg.id] ? (
+                          <Chip
+                            label={`Rated: ${feedbackSubmitted[msg.id]}/5`}
+                            color="success"
+                            size="small"
+                            sx={{ fontSize: '0.75rem' }}
+                          />
+                        ) : (
+                          <>
+                            <Typography variant="caption" color="text.secondary" sx={{ flexShrink: 0 }}>
+                              Rate this response:
+                            </Typography>
+                            <Rating
+                              size="small"
+                              onChange={(event, newValue) => {
+                                if (newValue) {
+                                  handleFeedback(msg.id, newValue);
+                                }
+                              }}
+                              sx={{
+                                flexShrink: 0,
+                                '& .MuiRating-iconFilled': {
+                                  color: theme.palette.primary.main,
+                                },
+                                '& .MuiRating-iconHover': {
+                                  color: theme.palette.primary.light,
+                                },
+                              }}
+                            />
+                            <Tooltip title="Quick feedback">
+                              <Box sx={{ display: "flex", gap: 0.5, flexShrink: 0 }}>
+                                <IconButton
+                                  size="small"
+                                  onClick={() => handleFeedback(msg.id, 5)}
+                                  sx={{
+                                    color: theme.palette.success.main,
+                                    '&:hover': {
+                                      bgcolor: theme.palette.success.light + '20',
+                                    },
+                                  }}
+                                >
+                                  <ThumbUp fontSize="small" />
+                                </IconButton>
+                                <IconButton
+                                  size="small"
+                                  onClick={() => handleFeedback(msg.id, 1)}
+                                  sx={{
+                                    color: theme.palette.error.main,
+                                    '&:hover': {
+                                      bgcolor: theme.palette.error.light + '20',
+                                    },
+                                  }}
+                                >
+                                  <ThumbDown fontSize="small" />
+                                </IconButton>
+                              </Box>
+                            </Tooltip>
+                          </>
+                        )}
+                      </Box>
+                    )}
                   </Paper>
                   <Typography
                     variant="caption"
@@ -275,6 +406,7 @@ const Chat = ({ onClose }) => {
             borderTop: "1px solid",
             borderColor: "divider",
             bgcolor: theme.palette.background.paper,
+            width: "100%", // Full width
           }}
         >
           <Box
@@ -286,6 +418,7 @@ const Chat = ({ onClose }) => {
               borderRadius: 3,
               p: 1,
               boxShadow: "inset 0 2px 4px rgba(0,0,0,0.05)",
+              width: "100%", // Full width
             }}
           >
             <TextField
@@ -325,6 +458,7 @@ const Chat = ({ onClose }) => {
                 "&:disabled": {
                   bgcolor: theme.palette.action.disabledBackground,
                 },
+                flexShrink: 0, // Prevent button from shrinking
               }}
             >
               <Send />

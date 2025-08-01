@@ -1,16 +1,30 @@
 package com.Mood2Food.mood2food.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 public class FoodLogRequest {
+    @NotBlank(message = "Food item is required")
     private String foodItem;
+    
     private String quantity;
+    
     private String mealType;
+    
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime eatingTime;
+    
     private String emotionEmoji;
     private String emotionDescription;
+    
+    @NotNull(message = "Hunger level is required")
     private Integer hungerLevel;
+    
+    @NotNull(message = "Satisfaction level is required")
     private Integer satisfactionLevel;
+    
     private String location;
     private String company;
     private String notes;

@@ -248,8 +248,10 @@ const CrisisIntervention = () => {
         <Card
           sx={{
             mb: 3,
-            background: "linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%)",
+            background: "linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%)",
             color: "white",
+            borderRadius: 3,
+            boxShadow: "0 8px 32px rgba(139, 92, 246, 0.3)",
           }}
         >
           <CardContent>

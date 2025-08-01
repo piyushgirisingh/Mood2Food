@@ -102,7 +102,9 @@ const FoodLogForm = ({ onFoodLogAdded }) => {
     setError("");
 
     try {
-      const response = await foodLogAPI.addFoodLog(formData);
+      console.log("Submitting food log data:", formData);
+      const response = await foodLogAPI.createFoodLog(formData);
+      console.log("Food log response:", response);
       setSuccess("Food log added successfully!");
       setFormData({
         foodItem: "",
@@ -122,6 +124,8 @@ const FoodLogForm = ({ onFoodLogAdded }) => {
         onFoodLogAdded();
       }
     } catch (err) {
+      console.error("Food log error:", err);
+      console.error("Error response:", err.response);
       setError("Failed to add food log. Please try again.");
     } finally {
       setLoading(false);
