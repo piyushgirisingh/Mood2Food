@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
+import { useTheme } from "@mui/material/styles";
 import {
   Grid,
   Card,
@@ -27,6 +28,7 @@ import EnhancedInsights from "../components/EnhancedInsights";
 
 
 const Dashboard = () => {
+  const theme = useTheme();
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -203,10 +205,10 @@ const Dashboard = () => {
     <Box sx={{ py: 3, width: "100%" }}>
       {/* Header Section */}
       <Box mb={3}>
-        <Typography variant="h4" sx={{ color: "#F8FAFC", fontWeight: 700, mb: 1 }}>
+        <Typography variant="h4" sx={{ color: theme.palette.text.primary, fontWeight: 700, mb: 1 }}>
           Dashboard
         </Typography>
-        <Typography variant="h6" sx={{ color: "#CBD5E1", fontWeight: 400 }}>
+        <Typography variant="h6" sx={{ color: theme.palette.text.secondary, fontWeight: 400 }}>
           Welcome back! Here's your progress overview.
         </Typography>
       </Box>
@@ -218,16 +220,20 @@ const Dashboard = () => {
           {funFact && (
             <Card
               sx={{
-                background: "linear-gradient(135deg, #1E293B 0%, #334155 100%)",
-                color: "white",
+                background: theme.palette.mode === 'dark' 
+                  ? "linear-gradient(135deg, #1E293B 0%, #334155 100%)"
+                  : "linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%)",
+                color: theme.palette.text.primary,
                 borderRadius: 3,
-                boxShadow: "0 8px 32px rgba(30, 41, 59, 0.3)",
+                boxShadow: theme.palette.mode === 'dark'
+                  ? "0 8px 32px rgba(30, 41, 59, 0.3)"
+                  : "0 8px 32px rgba(0, 0, 0, 0.1)",
                 height: "fit-content",
               }}
             >
               <CardContent sx={{ p: 3 }}>
                 <Box display="flex" alignItems="center" mb={2}>
-                  <EmojiEvents sx={{ fontSize: 28, color: "#FBBF24", mr: 1 }} />
+                  <EmojiEvents sx={{ fontSize: 28, color: theme.palette.secondary.main, mr: 1 }} />
                   <Typography variant="h6" fontWeight="bold">
                     Fun Facts
                   </Typography>
@@ -245,16 +251,25 @@ const Dashboard = () => {
                     label={funFact.category}
                     size="small"
                     sx={{
-                      backgroundColor: "rgba(255,255,255,0.2)",
-                      color: "white",
+                      backgroundColor: theme.palette.mode === 'dark' 
+                        ? "rgba(255,255,255,0.2)"
+                        : "rgba(139, 92, 246, 0.1)",
+                      color: theme.palette.mode === 'dark' 
+                        ? "white"
+                        : theme.palette.primary.main,
                       fontWeight: "bold",
                     }}
                   />
-                  <Lightbulb sx={{ fontSize: 20, color: "#FBBF24" }} />
+                  <Lightbulb sx={{ fontSize: 20, color: theme.palette.secondary.main }} />
                 </Box>
                 <Typography
                   variant="body1"
-                  sx={{ opacity: 0.9, fontStyle: "italic", mb: 2 }}
+                  sx={{ 
+                    opacity: 0.9, 
+                    fontStyle: "italic", 
+                    mb: 2,
+                    color: theme.palette.text.secondary
+                  }}
                 >
                   💡 <strong>Pro Tip:</strong> {funFact.tip}
                 </Typography>
@@ -263,7 +278,9 @@ const Dashboard = () => {
                     sx={{
                       width: "100%",
                       height: 4,
-                      backgroundColor: "rgba(255,255,255,0.2)",
+                      backgroundColor: theme.palette.mode === 'dark' 
+                        ? "rgba(255,255,255,0.2)"
+                        : "rgba(139, 92, 246, 0.2)",
                       borderRadius: 2,
                       overflow: "hidden",
                     }}
@@ -272,7 +289,7 @@ const Dashboard = () => {
                       sx={{
                         width: `${(timeRemaining / 5) * 100}%`,
                         height: "100%",
-                        backgroundColor: "#FBBF24",
+                        backgroundColor: theme.palette.secondary.main,
                         transition: "width 1s linear",
                         borderRadius: 2,
                       }}
@@ -291,22 +308,31 @@ const Dashboard = () => {
         <Grid item xs={12} md={6}>
           <Card
             sx={{
-              background: "linear-gradient(135deg, #1E293B 0%, #334155 100%)",
-              color: "white",
+              background: theme.palette.mode === 'dark' 
+                ? "linear-gradient(135deg, #1E293B 0%, #334155 100%)"
+                : "linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%)",
+              color: theme.palette.text.primary,
               borderRadius: 3,
-              boxShadow: "0 8px 32px rgba(30, 41, 59, 0.3)",
+              boxShadow: theme.palette.mode === 'dark'
+                ? "0 8px 32px rgba(30, 41, 59, 0.3)"
+                : "0 8px 32px rgba(0, 0, 0, 0.1)",
               height: "100%",
               minHeight: "400px",
             }}
           >
             <CardContent sx={{ p: 4, height: "100%", display: "flex", flexDirection: "column" }}>
               <Box display="flex" alignItems="center" mb={3}>
-                <Restaurant sx={{ fontSize: 32, color: "#FBBF24", mr: 2 }} />
+                <Restaurant sx={{ fontSize: 32, color: theme.palette.secondary.main, mr: 2 }} />
                 <Typography variant="h5" fontWeight="bold">
                   Food & Mood Tracking
                 </Typography>
               </Box>
-              <Typography variant="body1" sx={{ opacity: 0.9, mb: 4, lineHeight: 1.6 }}>
+              <Typography variant="body1" sx={{ 
+                opacity: 0.9, 
+                mb: 4, 
+                lineHeight: 1.6,
+                color: theme.palette.text.secondary
+              }}>
                 Track what you eat, when you eat it, and how you feel. This helps you become more aware of your eating habits and emotional patterns.
               </Typography>
               <Box sx={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -346,15 +372,15 @@ const Dashboard = () => {
         >
           <CardContent sx={{ p: 3 }}>
             <Box display="flex" alignItems="center" mb={2}>
-              <TrendingUp sx={{ mr: 1, color: "#8B5CF6" }} />
+              <TrendingUp sx={{ mr: 1, color: theme.palette.primary.main }} />
               <Typography
                 variant="h6"
-                sx={{ color: "#F8FAFC", fontWeight: 600 }}
+                sx={{ color: theme.palette.text.primary, fontWeight: 600 }}
               >
                 Recent Activity
               </Typography>
             </Box>
-            <Typography variant="body2" sx={{ color: "#CBD5E1" }}>
+            <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
               {dashboardData.recentActivity}
             </Typography>
           </CardContent>

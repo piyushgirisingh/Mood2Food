@@ -42,6 +42,7 @@ import {
 } from "@mui/icons-material";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import { useThemeMode } from "../contexts/ThemeContext";
 
 function ScrollTop(props) {
   const { children } = props;
@@ -75,7 +76,7 @@ const Layout = ({ children }) => {
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [mobileOpen, setMobileOpen] = useState(false);
   const [pageTitle, setPageTitle] = useState("");
-  const [darkMode, setDarkMode] = useState(false);
+  const { mode, toggleMode } = useThemeMode();
   const [anchorEl, setAnchorEl] = useState(null);
   const [notificationAnchorEl, setNotificationAnchorEl] = useState(null);
 
@@ -127,8 +128,7 @@ const Layout = ({ children }) => {
   };
 
   const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-    // You would implement actual dark mode logic here
+    toggleMode();
   };
 
   const drawer = (
@@ -258,7 +258,7 @@ const Layout = ({ children }) => {
             <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
               <Tooltip title="Toggle theme" arrow>
                 <IconButton onClick={toggleDarkMode} color="inherit">
-                  {darkMode ? <WbSunny /> : <NightsStay />}
+                  {mode === 'dark' ? <WbSunny /> : <NightsStay />}
                 </IconButton>
               </Tooltip>
               <Tooltip title="Notifications" arrow>

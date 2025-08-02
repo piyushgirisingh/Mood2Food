@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTheme } from '@mui/material/styles';
 import {
   Card,
   CardContent,
@@ -25,6 +26,7 @@ import { foodLogAPI } from '../services/api';
 import EditFoodLogForm from './EditFoodLogForm';
 
 const TodayFoodLogs = ({ refreshTrigger }) => {
+  const theme = useTheme();
   const [foodLogs, setFoodLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -92,12 +94,12 @@ const TodayFoodLogs = ({ refreshTrigger }) => {
 
   const getMealTypeColor = (mealType) => {
     const colors = {
-      breakfast: '#ff9800',
-      lunch: '#4caf50',
-      dinner: '#2196f3',
-      snack: '#9c27b0',
+      breakfast: theme.palette.warning.main,
+      lunch: theme.palette.success.main,
+      dinner: theme.palette.info.main,
+      snack: theme.palette.secondary.main,
     };
-    return colors[mealType] || '#757575';
+    return colors[mealType] || theme.palette.text.secondary;
   };
 
   const getSatisfactionColor = (level) => {
@@ -233,7 +235,7 @@ const TodayFoodLogs = ({ refreshTrigger }) => {
                           sx={{
                             width: 100,
                             height: 8,
-                            backgroundColor: '#e0e0e0',
+                            backgroundColor: theme.palette.divider,
                             borderRadius: 4,
                             overflow: 'hidden',
                           }}
@@ -261,7 +263,7 @@ const TodayFoodLogs = ({ refreshTrigger }) => {
                           sx={{
                             width: 100,
                             height: 8,
-                            backgroundColor: '#e0e0e0',
+                            backgroundColor: theme.palette.divider,
                             borderRadius: 4,
                             overflow: 'hidden',
                           }}

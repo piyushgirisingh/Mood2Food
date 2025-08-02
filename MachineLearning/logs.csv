@@ -30,3 +30,9 @@ timestamp,text,emotion,confidence,user_id
 2025-07-31T12:47:03.322308,[Emotional Eating Support Context] I think I have been eating sweets too much at night. Can you suggest some strategies I could use to reduce this consumption?,neutral,63.7974739074707,e569c3d0-79e0-4d9f-a920-eeb16d61ea83
 2025-07-31T19:49:34.327230,[Emotional Eating Support Context] hi,neutral,95.22000551223756,330cf335-00ac-4974-b159-ad986c4ce2db
 2025-08-01T20:00:57.494762,[Emotional Eating Support Context] hi there,neutral,88.11649084091187,bc92d9ab-a205-424a-bd6c-9ccafeef3d92
+2025-08-01T20:29:39.795673,[Emotional Eating Support Context] Hi,neutral,94.84206438064577,b78f1670-6e38-47dd-937f-9788d82a1e3b
+2025-08-01T20:30:39.052959,[Emotional Eating Support Context] I have been struggling with emotional eating recently. Could you help me recognize my patterns as I log my food entries?,neutral,68.49560737609863,b78f1670-6e38-47dd-937f-9788d82a1e3b
+2025-08-01T20:32:02.878711,[Emotional Eating Support Context] When is Dallas Mavericks playing their next game?,neutral,92.85762310028076,b78f1670-6e38-47dd-937f-9788d82a1e3b
+2025-08-02T11:57:10.370343,[Emotional Eating Support Context] hi,neutral,95.22000551223756,330cf335-00ac-4974-b159-ad986c4ce2db
+2025-08-02T11:57:35.731864,[Emotional Eating Support Context] what times do i eat the most?,neutral,91.89707636833192,330cf335-00ac-4974-b159-ad986c4ce2db
+2025-08-02T11:58:31.241268,[Emotional Eating Support Context] Monster Trucks,neutral,87.39115595817566,330cf335-00ac-4974-b159-ad986c4ce2db

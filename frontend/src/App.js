@@ -5,14 +5,14 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import { ThemeProvider, CssBaseline } from "@mui/material";
-import theme from "./theme";
+import { ThemeProvider } from "./contexts/ThemeContext";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import Chat from "./pages/Chat";
 import CopingTools from "./pages/CopingTools";
 import Insights from "./pages/Insights";
+import FoodLog from "./pages/FoodLog";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import ScrollingLayout from "./components/ScrollingLayout";
@@ -21,8 +21,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
+    <ThemeProvider>
       <AuthProvider>
         <Router>
           <Routes>
@@ -62,6 +61,16 @@ function App() {
                 <ProtectedRoute>
                   <ScrollingLayout>
                     <Insights />
+                  </ScrollingLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/food-log"
+              element={
+                <ProtectedRoute>
+                  <ScrollingLayout>
+                    <FoodLog />
                   </ScrollingLayout>
                 </ProtectedRoute>
               }

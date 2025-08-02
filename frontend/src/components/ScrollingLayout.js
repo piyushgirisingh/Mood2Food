@@ -42,6 +42,7 @@ import {
 } from "@mui/icons-material";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import { useThemeMode } from "../contexts/ThemeContext";
 import Chat from "../pages/Chat";
 import { dashboardAPI } from "../services/api";
 
@@ -57,7 +58,7 @@ const ScrollingLayout = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { logout } = useAuth();
-  const [darkMode, setDarkMode] = useState(true);
+  const { mode, toggleMode } = useThemeMode();
   const [anchorEl, setAnchorEl] = useState(null);
   const [notificationAnchorEl, setNotificationAnchorEl] = useState(null);
   const [showChat, setShowChat] = useState(false);
@@ -72,7 +73,7 @@ const ScrollingLayout = ({ children }) => {
 
   const sidebarItems = [
     { icon: <Dashboard />, text: "Quick Stats", action: () => navigate("/dashboard") },
-    { icon: <Restaurant />, text: "Log Food", action: () => navigate("/dashboard") },
+    { icon: <Restaurant />, text: "Log Food", action: () => navigate("/food-log") },
     { icon: <Psychology />, text: "Coping Tools", action: () => navigate("/coping-tools") },
     { icon: <Insights />, text: "View Insights", action: () => navigate("/insights") },
     { icon: <Timer />, text: "Mindful Timer", action: () => navigate("/coping-tools") },
@@ -95,7 +96,7 @@ const ScrollingLayout = ({ children }) => {
   };
 
   const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
+    toggleMode();
   };
 
   // Fetch dashboard data
@@ -218,20 +219,19 @@ const ScrollingLayout = ({ children }) => {
             {sections.map((section) => (
               <Button
                 key={section.path}
-                color="inherit"
-                onClick={() => navigate(section.path)}
                 sx={{
                   position: "relative",
                   fontWeight: location.pathname === section.path ? 600 : 400,
+                  color: theme.palette.text.primary,
                   backgroundColor:
                     location.pathname === section.path
-                      ? "rgba(139, 92, 246, 0.15)"
+                      ? `${theme.palette.primary.main}20`
                       : "transparent",
                   borderRadius: "8px",
                   padding: "8px 16px",
                   border:
                     location.pathname === section.path
-                      ? "1px solid rgba(139, 92, 246, 0.3)"
+                      ? `1px solid ${theme.palette.primary.main}40`
                       : "1px solid transparent",
                   "&::after": {
                     content: '""',
@@ -247,30 +247,31 @@ const ScrollingLayout = ({ children }) => {
                   "&:hover": {
                     backgroundColor:
                       location.pathname === section.path
-                        ? "rgba(139, 92, 246, 0.25)"
-                        : "rgba(255, 255, 255, 0.1)",
+                        ? `${theme.palette.primary.main}30`
+                        : `${theme.palette.text.primary}10`,
                     borderColor:
                       location.pathname === section.path
-                        ? "rgba(139, 92, 246, 0.5)"
-                        : "rgba(255, 255, 255, 0.2)",
+                        ? `${theme.palette.primary.main}60`
+                        : `${theme.palette.text.primary}20`,
                   },
                   "&:hover::after": {
                     width: "80%",
                   },
                 }}
+                onClick={() => navigate(section.path)}
               >
                 {section.title}
               </Button>
             ))}
           </Stack>
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <Tooltip title="Toggle theme" arrow>
-              <IconButton onClick={toggleDarkMode} color="inherit">
-                {darkMode ? <WbSunny /> : <NightsStay />}
-              </IconButton>
-            </Tooltip>
+                          <Tooltip title="Toggle theme" arrow>
+                <IconButton onClick={toggleDarkMode} sx={{ color: theme.palette.text.primary }}>
+                  {mode === 'dark' ? <WbSunny /> : <NightsStay />}
+                </IconButton>
+              </Tooltip>
             <Tooltip title="Notifications" arrow>
-              <IconButton color="inherit" onClick={handleNotificationOpen}>
+              <IconButton sx={{ color: theme.palette.text.primary }} onClick={handleNotificationOpen}>
                 <Badge badgeContent={3} color="secondary">
                   <Notifications />
                 </Badge>

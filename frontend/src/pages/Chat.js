@@ -15,7 +15,7 @@ import {
   Tooltip,
   Chip,
 } from "@mui/material";
-import { Send, SmartToy, ThumbUp, ThumbDown } from "@mui/icons-material";
+import { Send, SmartToy, ThumbUp, ThumbDown, Close } from "@mui/icons-material";
 import GlowingBorder from "../components/GlowingBorder";
 import { chatAPI } from "../services/api";
 import { useAuth } from "../contexts/AuthContext";
@@ -204,6 +204,38 @@ const Chat = ({ onClose }) => {
           width: "100%", // Full width
         }}
       >
+        {/* Chat Header */}
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            p: 2,
+            borderBottom: "1px solid",
+            borderColor: "divider",
+            bgcolor: "background.paper",
+          }}
+        >
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <SmartToy sx={{ color: "primary.main", fontSize: 24 }} />
+            <Typography variant="h6" fontWeight={600}>
+              AI Chat Assistant
+            </Typography>
+          </Box>
+          <IconButton
+            onClick={onClose}
+            sx={{
+              color: "text.secondary",
+              "&:hover": {
+                color: "error.main",
+                bgcolor: "error.light",
+              },
+            }}
+          >
+            <Close />
+          </IconButton>
+        </Box>
+
         {/* Messages Container */}
         <Box
           sx={{

@@ -52,6 +52,11 @@ const EnhancedInsights = () => {
         triggerLogAPI.getTriggerLogs(),
       ]);
 
+      console.log("=== DATA LOADING ===");
+      console.log("Insights data:", insightsRes.data);
+      console.log("Food logs data:", foodLogsRes.data);
+      console.log("Trigger logs data:", triggerLogsRes.data);
+      
       setInsights(insightsRes.data);
       setFoodLogs(foodLogsRes.data || []);
       setTriggerLogs(triggerLogsRes.data || []);
@@ -187,8 +192,15 @@ const EnhancedInsights = () => {
 
     // Generate recommendations
     const recommendations = [];
+    
+    console.log("=== RECOMMENDATION ANALYSIS ===");
+    console.log("Emotional eating frequency:", emotionalEatingFrequency);
+    console.log("Common triggers:", commonTriggers);
+    console.log("Peak times:", peakTimes);
+    console.log("Mood-food connections:", moodFoodConnections);
 
     if (emotionalEatingFrequency > 50) {
+      console.log("Adding high priority recommendation for emotional eating > 50%");
       recommendations.push({
         priority: "high",
         message: "Consider using coping strategies before reaching for food",
@@ -198,6 +210,7 @@ const EnhancedInsights = () => {
 
     if (commonTriggers.length > 0) {
       const topTrigger = commonTriggers[0];
+      console.log("Adding trigger recommendation for:", topTrigger.trigger);
       recommendations.push({
         priority: "medium",
         message: `"${topTrigger.trigger}" is your most common trigger`,
@@ -206,12 +219,15 @@ const EnhancedInsights = () => {
     }
 
     if (peakTimes.length > 0 && peakTimes[0].time === "Evening") {
+      console.log("Adding evening peak time recommendation");
       recommendations.push({
         priority: "medium",
         message: "Evening is your peak emotional eating time",
         action: "Plan engaging evening activities",
       });
     }
+    
+    console.log("Final recommendations:", recommendations);
 
     return {
       emotionalEatingFrequency,

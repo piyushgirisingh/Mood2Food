@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useTheme } from "@mui/material/styles";
 import {
   Box,
   Container,
@@ -64,6 +65,7 @@ import {
 import { insightAPI } from "../services/api";
 
 const Insights = () => {
+  const theme = useTheme();
   const [insights, setInsights] = useState([]);
   const [newInsight, setNewInsight] = useState("");
   const [latestInsight, setLatestInsight] = useState(null);
@@ -231,12 +233,12 @@ const Insights = () => {
       {/* Header */}
       <Box mb={4}>
         <Box display="flex" alignItems="center" mb={2}>
-          <InsightsIcon sx={{ mr: 2, fontSize: 32, color: "#8B5CF6" }} />
-          <Typography variant="h4" sx={{ color: "#F8FAFC", fontWeight: 700 }}>
+          <InsightsIcon sx={{ mr: 2, fontSize: 32, color: theme.palette.primary.main }} />
+          <Typography variant="h4" sx={{ color: theme.palette.text.primary, fontWeight: 700 }}>
             Personal Insights & Growth
           </Typography>
         </Box>
-        <Typography variant="h6" sx={{ color: "#CBD5E1", fontWeight: 400 }}>
+        <Typography variant="h6" sx={{ color: theme.palette.text.secondary, fontWeight: 400 }}>
           Reflect, learn, and grow on your emotional eating journey.
         </Typography>
       </Box>
@@ -260,15 +262,15 @@ const Insights = () => {
           onChange={handleTabChange}
           sx={{
             "& .MuiTab-root": {
-              color: "#CBD5E1",
+              color: theme.palette.text.secondary,
               fontWeight: 500,
               "&.Mui-selected": {
-                color: "#8B5CF6",
+                color: theme.palette.primary.main,
                 fontWeight: 600,
               },
             },
             "& .MuiTabs-indicator": {
-              backgroundColor: "#8B5CF6",
+              backgroundColor: theme.palette.primary.main,
             },
           }}
         >
@@ -287,16 +289,16 @@ const Insights = () => {
             <Card sx={{ mb: 3 }}>
               <CardContent>
                 <Box display="flex" alignItems="center" mb={2}>
-                  <Lightbulb sx={{ mr: 1, color: "#8B5CF6" }} />
+                  <Lightbulb sx={{ mr: 1, color: theme.palette.primary.main }} />
                   <Typography
                     variant="h6"
-                    sx={{ color: "#F8FAFC", fontWeight: 600 }}
+                    sx={{ color: theme.palette.text.primary, fontWeight: 600 }}
                   >
                     Add New Insight
                   </Typography>
                 </Box>
 
-                <Typography variant="body2" sx={{ color: "#CBD5E1", mb: 2 }}>
+                <Typography variant="body2" sx={{ color: theme.palette.text.secondary, mb: 2 }}>
                   Record your thoughts, realizations, and personal growth
                   moments about your emotional eating journey.
                 </Typography>
@@ -312,13 +314,13 @@ const Insights = () => {
                     onKeyPress={handleKeyPress}
                     sx={{
                       "& .MuiOutlinedInput-root": {
-                        backgroundColor: "#374151",
+                        backgroundColor: theme.palette.mode === 'dark' ? "#374151" : "#FFFFFF",
                         "& textarea": {
-                          color: "#F8FAFC",
+                          color: theme.palette.text.primary,
                         },
                       },
                       "& .MuiInputLabel-root": {
-                        color: "#D1D5DB",
+                        color: theme.palette.text.secondary,
                       },
                     }}
                   />
@@ -328,18 +330,16 @@ const Insights = () => {
                     disabled={loading || !newInsight.trim()}
                     startIcon={<Add />}
                     sx={{
-                      background:
-                        "linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%)",
+                      background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.light} 100%)`,
                       color: "white",
                       fontWeight: 600,
                       px: 3,
                       "&:hover": {
-                        background:
-                          "linear-gradient(135deg, #7C3AED 0%, #8B5CF6 100%)",
+                        background: `linear-gradient(135deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 100%)`,
                       },
                       "&:disabled": {
-                        background: "#6B7280",
-                        color: "#9CA3AF",
+                        background: theme.palette.mode === 'dark' ? "#6B7280" : "#CBD5E1",
+                        color: theme.palette.mode === 'dark' ? "#9CA3AF" : "#64748B",
                       },
                     }}
                   >
