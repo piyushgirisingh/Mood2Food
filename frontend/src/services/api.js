@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 // Environment variables for backend and ML URLs
-const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080';
-const mlUrl = import.meta.env.VITE_ML_URL || 'http://localhost:10000';
+const backendUrl = process.env.REACT_APP_API_URL || 'http://localhost:8080';
+const mlUrl = process.env.REACT_APP_ML_URL || 'http://localhost:10000';
 
 // Create axios instance with base configuration
 const api = axios.create({
