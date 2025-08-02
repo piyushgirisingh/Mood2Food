@@ -98,12 +98,21 @@ const EnhancedInsights = () => {
 
     // Analyze peak times
     const timeCounts = {};
+    console.log("Food logs for time analysis:", foodLogs);
     foodLogs.forEach((log) => {
-      const hour = new Date(log.timestamp).getHours();
-      const timeSlot =
-        hour < 12 ? "Morning" : hour < 17 ? "Afternoon" : "Evening";
+      const hour = new Date(log.eatingTime).getHours();
+      let timeSlot;
+      if (hour >= 5 && hour < 12) {
+        timeSlot = "Morning";
+      } else if (hour >= 12 && hour < 17) {
+        timeSlot = "Afternoon";
+      } else {
+        timeSlot = "Evening";
+      }
+      console.log(`Food log at ${log.eatingTime}, hour: ${hour}, timeSlot: ${timeSlot}`);
       timeCounts[timeSlot] = (timeCounts[timeSlot] || 0) + 1;
     });
+    console.log("Time counts:", timeCounts);
     const peakTimes = Object.entries(timeCounts)
       .sort(([, a], [, b]) => b - a)
       .map(([time, count]) => ({ time, count }));

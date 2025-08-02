@@ -68,4 +68,10 @@ public interface FoodLogRepository extends JpaRepository<FoodLog, UUID> {
     // Find emotional eating patterns (high hunger but low satisfaction)
     @Query("SELECT fl FROM FoodLog fl WHERE fl.student = :student AND fl.hungerLevel >= 7 AND fl.satisfactionLevel <= 5 ORDER BY fl.eatingTime DESC")
     List<FoodLog> findEmotionalEatingPatterns(@Param("student") Student student);
+    
+    // Count food logs for a student within a date range
+    @Query("SELECT COUNT(fl) FROM FoodLog fl WHERE fl.student = :student AND fl.eatingTime BETWEEN :startDate AND :endDate")
+    long countByStudentAndCreatedAtBetween(@Param("student") Student student, 
+                                         @Param("startDate") LocalDateTime startDate, 
+                                         @Param("endDate") LocalDateTime endDate);
 } 

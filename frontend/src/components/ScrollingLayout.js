@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Container,
@@ -43,6 +43,7 @@ import {
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import Chat from "../pages/Chat";
+import { dashboardAPI } from "../services/api";
 
 const ScrollingLayout = ({ children }) => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -60,6 +61,8 @@ const ScrollingLayout = ({ children }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [notificationAnchorEl, setNotificationAnchorEl] = useState(null);
   const [showChat, setShowChat] = useState(false);
+  const [dashboardData, setDashboardData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const sections = [
     { path: "/", title: "Dashboard" },
@@ -94,6 +97,22 @@ const ScrollingLayout = ({ children }) => {
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
   };
+
+  // Fetch dashboard data
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const response = await dashboardAPI.getDashboard();
+        setDashboardData(response.data);
+      } catch (error) {
+        console.error("Error fetching dashboard data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
 
   return (
     <Box
@@ -362,7 +381,7 @@ const ScrollingLayout = ({ children }) => {
                   Food Entries
                 </Typography>
                 <Typography variant="h4" color="primary">
-                  3
+                  {loading ? "..." : (dashboardData?.foodLogsCount || 0)}
                 </Typography>
               </Box>
               <Box sx={{ mb: 2 }}>
@@ -370,7 +389,7 @@ const ScrollingLayout = ({ children }) => {
                   Coping Strategies Used
                 </Typography>
                 <Typography variant="h4" color="secondary">
-                  2
+                  {loading ? "..." : (dashboardData?.copingToolsUsed || 0)}
                 </Typography>
               </Box>
               <Box>
@@ -378,7 +397,7 @@ const ScrollingLayout = ({ children }) => {
                   Current Streak
                 </Typography>
                 <Typography variant="h4" sx={{ color: "success.main" }}>
-                  5 days
+                  {loading ? "..." : `${dashboardData?.currentStreak || 0} days`}
                 </Typography>
               </Box>
             </CardContent>

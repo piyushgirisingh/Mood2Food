@@ -29,13 +29,50 @@ public class DashboardService {
 
     public Map<String, Object> getDashboardData(Student student) {
         Map<String, Object> data = new HashMap<>();
-        // TODO: Add logic for trends, frequent triggers, streaks, etc.
+        
+        // Get today's date at start of day
+        java.time.LocalDate today = java.time.LocalDate.now();
+        java.time.LocalDateTime startOfDay = today.atStartOfDay();
+        java.time.LocalDateTime endOfDay = today.atTime(23, 59, 59);
+        
+        // Count today's food logs
+        long todayFoodLogs = foodLogRepository.countByStudentAndCreatedAtBetween(student, startOfDay, endOfDay);
+        
+        // Count today's coping tool usage
+        long todayCopingTools = copingToolUsageRepository.countByStudentAndCreatedAtBetween(student, startOfDay, endOfDay);
+        
+        // Calculate current streak (consecutive days with food logs)
+        int currentStreak = calculateCurrentStreak(student);
+        
+        data.put("foodLogsCount", todayFoodLogs);
+        data.put("copingToolsUsed", todayCopingTools);
+        data.put("currentStreak", currentStreak);
         data.put("chatCount", chatMessageRepository.countByStudent(student));
-        data.put("copingToolsUsed", copingToolUsageRepository.countByStudent(student));
         data.put("insightsCount", insightRepository.countByStudent(student));
         data.put("triggerLogsCount", triggerLogRepository.countByStudent(student));
-        data.put("foodLogsCount", foodLogRepository.countByStudent(student));
+        
         return data;
+    }
+    
+    private int calculateCurrentStreak(Student student) {
+        java.time.LocalDate today = java.time.LocalDate.now();
+        int streak = 0;
+        
+        for (int i = 0; i < 30; i++) { // Check last 30 days
+            java.time.LocalDate checkDate = today.minusDays(i);
+            java.time.LocalDateTime startOfDay = checkDate.atStartOfDay();
+            java.time.LocalDateTime endOfDay = checkDate.atTime(23, 59, 59);
+            
+            long foodLogsOnDate = foodLogRepository.countByStudentAndCreatedAtBetween(student, startOfDay, endOfDay);
+            
+            if (foodLogsOnDate > 0) {
+                streak++;
+            } else {
+                break; // Streak ends when we find a day with no food logs
+            }
+        }
+        
+        return streak;
     }
 
     public Map<String, Object> getFunFactOfTheDay() {
