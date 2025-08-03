@@ -39,6 +39,7 @@ import {
   AccountCircle,
   NightsStay,
   WbSunny,
+  Assessment,
 } from "@mui/icons-material";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
@@ -85,6 +86,7 @@ const Layout = ({ children }) => {
     { text: "Chat", icon: <Chat />, path: "/chat" },
     { text: "Coping Tools", icon: <Psychology />, path: "/coping-tools" },
     { text: "Insights", icon: <Insights />, path: "/insights" },
+    { text: "Reports", icon: <Assessment />, path: "/reports" },
     { text: "Trigger Logs", icon: <Settings />, path: "/trigger-logs" },
   ];
 

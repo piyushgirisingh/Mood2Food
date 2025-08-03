@@ -19,10 +19,19 @@ import { Send, SmartToy, ThumbUp, ThumbDown, Close } from "@mui/icons-material";
 import GlowingBorder from "../components/GlowingBorder";
 import { chatAPI } from "../services/api";
 import { useAuth } from "../contexts/AuthContext";
+import { getUserIdFromToken } from "../utils/jwtUtils";
 
 const Chat = ({ onClose }) => {
   const theme = useTheme();
   const { user } = useAuth();
+  
+  // Debug: Log user object
+  useEffect(() => {
+    console.log("Chat component - User object:", user);
+    if (user?.token) {
+      console.log("User token available:", user.token.substring(0, 20) + "...");
+    }
+  }, [user]);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
@@ -83,9 +92,7 @@ const Chat = ({ onClose }) => {
     setGlowActive(true);
 
     try {
-      // Add context about emotional eating support
-      const enhancedMessage = `[Emotional Eating Support Context] ${message}`;
-      const response = await chatAPI.sendMessage(enhancedMessage);
+      const response = await chatAPI.sendMessage(message);
       if (response.data) {
         const botMessage = {
           text: response.data.reply,
@@ -118,8 +125,17 @@ const Chat = ({ onClose }) => {
       const userMessage = messageIndex > 0 ? messages[messageIndex - 1] : null;
 
       if (userMessage && userMessage.sender === "user") {
+        // Extract user ID from JWT token
+        const userId = getUserIdFromToken(user.token);
+        
+        if (!userId) {
+          console.error("Could not extract user ID from token");
+          setError("Authentication error. Please log in again.");
+          return;
+        }
+
         await chatAPI.sendFeedback({
-          user_id: user.id,
+          user_id: userId,
           message: userMessage.text,
           response: message.text,
           emotion: message.emotion || "neutral",
@@ -131,9 +147,7 @@ const Chat = ({ onClose }) => {
         
         // Show success message
         setError(""); // Clear any existing errors
-        setTimeout(() => {
-          // You could show a success snackbar here if needed
-        }, 100);
+        console.log("Feedback submitted successfully:", { messageId, rating });
       }
     } catch (err) {
       console.error("Error submitting feedback:", err);
@@ -346,6 +360,7 @@ const Chat = ({ onClose }) => {
                             <Rating
                               size="small"
                               onChange={(event, newValue) => {
+                                console.log("Rating changed:", { messageId: msg.id, rating: newValue });
                                 if (newValue) {
                                   handleFeedback(msg.id, newValue);
                                 }
@@ -364,7 +379,10 @@ const Chat = ({ onClose }) => {
                               <Box sx={{ display: "flex", gap: 0.5, flexShrink: 0 }}>
                                 <IconButton
                                   size="small"
-                                  onClick={() => handleFeedback(msg.id, 5)}
+                                  onClick={() => {
+                                    console.log("Thumb up clicked for message:", msg.id);
+                                    handleFeedback(msg.id, 5);
+                                  }}
                                   sx={{
                                     color: theme.palette.success.main,
                                     '&:hover': {
@@ -376,7 +394,10 @@ const Chat = ({ onClose }) => {
                                 </IconButton>
                                 <IconButton
                                   size="small"
-                                  onClick={() => handleFeedback(msg.id, 1)}
+                                  onClick={() => {
+                                    console.log("Thumb down clicked for message:", msg.id);
+                                    handleFeedback(msg.id, 1);
+                                  }}
                                   sx={{
                                     color: theme.palette.error.main,
                                     '&:hover': {

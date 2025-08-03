@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTheme } from "@mui/material/styles";
 import {
   Card,
   CardContent,
@@ -31,6 +32,7 @@ import {
 import { foodLogAPI } from "../services/api";
 
 const FoodLogForm = ({ onFoodLogAdded }) => {
+  const theme = useTheme();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -123,6 +125,19 @@ const FoodLogForm = ({ onFoodLogAdded }) => {
       if (onFoodLogAdded) {
         onFoodLogAdded();
       }
+      // Dispatch event to refresh dashboard data
+      console.log('FoodLogForm: Dispatching foodLogUpdated event...');
+      // Add a small delay to ensure the food log is saved before refreshing
+      setTimeout(() => {
+        console.log('FoodLogForm: Dispatching foodLogUpdated event...');
+        window.dispatchEvent(new Event('foodLogUpdated'));
+        // Also set a localStorage flag as a backup
+        localStorage.setItem('foodLogUpdated', Date.now().toString());
+        // Dispatch a custom event with more data
+        window.dispatchEvent(new CustomEvent('dashboardRefresh', { 
+          detail: { timestamp: Date.now() } 
+        }));
+      }, 1000);
     } catch (err) {
       console.error("Food log error:", err);
       console.error("Error response:", err.response);
@@ -176,8 +191,12 @@ const FoodLogForm = ({ onFoodLogAdded }) => {
         PaperProps={{
           sx: {
             borderRadius: "16px",
-            background: "linear-gradient(135deg, #1E293B 0%, #334155 100%)",
-            border: "1px solid #475569",
+            background: theme.palette.mode === 'dark' 
+              ? "linear-gradient(135deg, #1E293B 0%, #334155 100%)"
+              : "linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%)",
+            border: theme.palette.mode === 'dark' 
+              ? "1px solid #475569"
+              : "1px solid #E2E8F0",
           },
         }}
       >
@@ -222,14 +241,14 @@ const FoodLogForm = ({ onFoodLogAdded }) => {
               <Typography
                 variant="h6"
                 sx={{
-                  color: "#F8FAFC",
+                  color: theme.palette.text.primary,
                   mb: 2,
                   fontWeight: 600,
                   display: "flex",
                   alignItems: "center",
                 }}
               >
-                <RestaurantIcon sx={{ mr: 1, color: "#8B5CF6" }} />
+                <RestaurantIcon sx={{ mr: 1, color: theme.palette.primary.main }} />
                 Food Details
               </Typography>
 
@@ -245,13 +264,13 @@ const FoodLogForm = ({ onFoodLogAdded }) => {
                     required
                     sx={{
                       "& .MuiInputLabel-root": {
-                        color: "#D1D5DB",
+                        color: theme.palette.text.secondary,
                         fontWeight: 500,
                       },
                       "& .MuiOutlinedInput-root": {
-                        backgroundColor: "#374151",
+                        backgroundColor: theme.palette.mode === 'dark' ? "#374151" : "#FFFFFF",
                         "& input": {
-                          color: "#F8FAFC",
+                          color: theme.palette.text.primary,
                         },
                       },
                     }}
@@ -267,13 +286,13 @@ const FoodLogForm = ({ onFoodLogAdded }) => {
                     }
                     sx={{
                       "& .MuiInputLabel-root": {
-                        color: "#D1D5DB",
+                        color: theme.palette.text.secondary,
                         fontWeight: 500,
                       },
                       "& .MuiOutlinedInput-root": {
-                        backgroundColor: "#374151",
+                        backgroundColor: theme.palette.mode === 'dark' ? "#374151" : "#FFFFFF",
                         "& input": {
-                          color: "#F8FAFC",
+                          color: theme.palette.text.primary,
                         },
                       },
                     }}
@@ -281,7 +300,7 @@ const FoodLogForm = ({ onFoodLogAdded }) => {
                 </Grid>
                 <Grid item xs={12} md={6}>
                   <FormControl fullWidth>
-                    <InputLabel sx={{ color: "#D1D5DB", fontWeight: 500 }}>
+                    <InputLabel sx={{ color: theme.palette.text.secondary, fontWeight: 500 }}>
                       Meal Type
                     </InputLabel>
                     <Select
@@ -290,9 +309,9 @@ const FoodLogForm = ({ onFoodLogAdded }) => {
                         handleInputChange("mealType", e.target.value)
                       }
                       sx={{
-                        backgroundColor: "#374151",
+                        backgroundColor: theme.palette.mode === 'dark' ? "#374151" : "#FFFFFF",
                         "& .MuiSelect-select": {
-                          color: "#F8FAFC",
+                          color: theme.palette.text.primary,
                         },
                       }}
                     >
@@ -315,13 +334,13 @@ const FoodLogForm = ({ onFoodLogAdded }) => {
                     }
                     InputLabelProps={{
                       shrink: true,
-                      sx: { color: "#D1D5DB", fontWeight: 500 },
+                      sx: { color: theme.palette.text.secondary, fontWeight: 500 },
                     }}
                     sx={{
                       "& .MuiOutlinedInput-root": {
-                        backgroundColor: "#374151",
+                        backgroundColor: theme.palette.mode === 'dark' ? "#374151" : "#FFFFFF",
                         "& input": {
-                          color: "#F8FAFC",
+                          color: theme.palette.text.primary,
                         },
                       },
                     }}
@@ -330,21 +349,21 @@ const FoodLogForm = ({ onFoodLogAdded }) => {
               </Grid>
             </Box>
 
-            <Divider sx={{ my: 3, borderColor: "#475569" }} />
+            <Divider sx={{ my: 3, borderColor: theme.palette.divider }} />
 
             {/* Emotional State Section */}
             <Box mb={4}>
               <Typography
                 variant="h6"
                 sx={{
-                  color: "#F8FAFC",
+                  color: theme.palette.text.primary,
                   mb: 2,
                   fontWeight: 600,
                   display: "flex",
                   alignItems: "center",
                 }}
               >
-                <EmojiIcon sx={{ mr: 1, color: "#F59E0B" }} />
+                <EmojiIcon sx={{ mr: 1, color: theme.palette.secondary.main }} />
                 How did you feel when eating?
               </Typography>
 
@@ -362,18 +381,18 @@ const FoodLogForm = ({ onFoodLogAdded }) => {
                     sx={{
                       backgroundColor:
                         formData.emotionDescription === emotion.description
-                          ? "#8B5CF6"
+                          ? theme.palette.primary.main
                           : "transparent",
                       color:
                         formData.emotionDescription === emotion.description
                           ? "white"
-                          : "#D1D5DB",
-                      borderColor: "#4B5563",
+                          : theme.palette.text.secondary,
+                      borderColor: theme.palette.divider,
                       "&:hover": {
                         backgroundColor:
                           formData.emotionDescription === emotion.description
-                            ? "#7C3AED"
-                            : "#374151",
+                            ? theme.palette.primary.dark
+                            : theme.palette.mode === 'dark' ? "#374151" : "#F1F5F9",
                       },
                     }}
                   />
@@ -384,7 +403,7 @@ const FoodLogForm = ({ onFoodLogAdded }) => {
                 <Grid item xs={12} md={6}>
                   <Typography
                     variant="body2"
-                    sx={{ color: "#D1D5DB", mb: 1, fontWeight: 500 }}
+                    sx={{ color: theme.palette.text.secondary, mb: 1, fontWeight: 500 }}
                   >
                     Hunger Level (1-10): {formData.hungerLevel}
                   </Typography>
@@ -398,9 +417,9 @@ const FoodLogForm = ({ onFoodLogAdded }) => {
                     marks
                     valueLabelDisplay="auto"
                     sx={{
-                      color: "#8B5CF6",
+                      color: theme.palette.primary.main,
                       "& .MuiSlider-mark": {
-                        backgroundColor: "#6B7280",
+                        backgroundColor: theme.palette.text.disabled,
                       },
                     }}
                   />
@@ -408,7 +427,7 @@ const FoodLogForm = ({ onFoodLogAdded }) => {
                 <Grid item xs={12} md={6}>
                   <Typography
                     variant="body2"
-                    sx={{ color: "#D1D5DB", mb: 1, fontWeight: 500 }}
+                    sx={{ color: theme.palette.text.secondary, mb: 1, fontWeight: 500 }}
                   >
                     Satisfaction Level (1-10): {formData.satisfactionLevel}
                   </Typography>
@@ -422,9 +441,9 @@ const FoodLogForm = ({ onFoodLogAdded }) => {
                     marks
                     valueLabelDisplay="auto"
                     sx={{
-                      color: "#F59E0B",
+                      color: theme.palette.secondary.main,
                       "& .MuiSlider-mark": {
-                        backgroundColor: "#6B7280",
+                        backgroundColor: theme.palette.text.disabled,
                       },
                     }}
                   />
@@ -432,28 +451,28 @@ const FoodLogForm = ({ onFoodLogAdded }) => {
               </Grid>
             </Box>
 
-            <Divider sx={{ my: 3, borderColor: "#475569" }} />
+            <Divider sx={{ my: 3, borderColor: theme.palette.divider }} />
 
             {/* Context Section */}
             <Box mb={4}>
               <Typography
                 variant="h6"
                 sx={{
-                  color: "#F8FAFC",
+                  color: theme.palette.text.primary,
                   mb: 2,
                   fontWeight: 600,
                   display: "flex",
                   alignItems: "center",
                 }}
               >
-                <TimeIcon sx={{ mr: 1, color: "#3B82F6" }} />
+                <TimeIcon sx={{ mr: 1, color: theme.palette.info.main }} />
                 Context
               </Typography>
 
               <Grid container spacing={3}>
                 <Grid item xs={12} md={6}>
                   <FormControl fullWidth>
-                    <InputLabel sx={{ color: "#D1D5DB", fontWeight: 500 }}>
+                    <InputLabel sx={{ color: theme.palette.text.secondary, fontWeight: 500 }}>
                       Location
                     </InputLabel>
                     <Select
@@ -462,9 +481,9 @@ const FoodLogForm = ({ onFoodLogAdded }) => {
                         handleInputChange("location", e.target.value)
                       }
                       sx={{
-                        backgroundColor: "#374151",
+                        backgroundColor: theme.palette.mode === 'dark' ? "#374151" : "#FFFFFF",
                         "& .MuiSelect-select": {
-                          color: "#F8FAFC",
+                          color: theme.palette.text.primary,
                         },
                       }}
                     >
@@ -478,7 +497,7 @@ const FoodLogForm = ({ onFoodLogAdded }) => {
                 </Grid>
                 <Grid item xs={12} md={6}>
                   <FormControl fullWidth>
-                    <InputLabel sx={{ color: "#D1D5DB", fontWeight: 500 }}>
+                    <InputLabel sx={{ color: theme.palette.text.secondary, fontWeight: 500 }}>
                       Company
                     </InputLabel>
                     <Select
@@ -487,9 +506,9 @@ const FoodLogForm = ({ onFoodLogAdded }) => {
                         handleInputChange("company", e.target.value)
                       }
                       sx={{
-                        backgroundColor: "#374151",
+                        backgroundColor: theme.palette.mode === 'dark' ? "#374151" : "#FFFFFF",
                         "& .MuiSelect-select": {
-                          color: "#F8FAFC",
+                          color: theme.palette.text.primary,
                         },
                       }}
                     >
@@ -511,13 +530,13 @@ const FoodLogForm = ({ onFoodLogAdded }) => {
                     onChange={(e) => handleInputChange("notes", e.target.value)}
                     sx={{
                       "& .MuiInputLabel-root": {
-                        color: "#D1D5DB",
+                        color: theme.palette.text.secondary,
                         fontWeight: 500,
                       },
                       "& .MuiOutlinedInput-root": {
-                        backgroundColor: "#374151",
+                        backgroundColor: theme.palette.mode === 'dark' ? "#374151" : "#FFFFFF",
                         "& textarea": {
-                          color: "#F8FAFC",
+                          color: theme.palette.text.primary,
                         },
                       },
                     }}
@@ -531,16 +550,18 @@ const FoodLogForm = ({ onFoodLogAdded }) => {
         <DialogActions
           sx={{
             padding: "16px 24px 24px",
-            background: "linear-gradient(135deg, #1E293B 0%, #334155 100%)",
+            background: theme.palette.mode === 'dark' 
+              ? "linear-gradient(135deg, #1E293B 0%, #334155 100%)"
+              : "linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%)",
             borderRadius: "0 0 16px 16px",
           }}
         >
           <Button
             onClick={handleClose}
             sx={{
-              color: "#D1D5DB",
+              color: theme.palette.text.secondary,
               "&:hover": {
-                backgroundColor: "#374151",
+                backgroundColor: theme.palette.mode === 'dark' ? "#374151" : "#F1F5F9",
               },
             }}
           >

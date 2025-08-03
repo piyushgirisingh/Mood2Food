@@ -50,8 +50,11 @@ import {
   Star,
   TrendingUp,
   EmojiEvents,
+  Download,
 } from "@mui/icons-material";
-import { copingToolAPI } from "../services/api";
+import { CircularProgress } from "@mui/material";
+import { copingToolAPI, reportsAPI, onboardingAPI } from "../services/api";
+import PersonalizedCopingTools from "../components/PersonalizedCopingTools";
 
 const CopingTools = () => {
   const theme = useTheme();
@@ -70,255 +73,36 @@ const CopingTools = () => {
   const [success, setSuccess] = useState("");
   const [usageHistory, setUsageHistory] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [downloading, setDownloading] = useState(false);
+  const [onboardingCompleted, setOnboardingCompleted] = useState(null);
   const intervalRef = useRef(null);
 
-  const copingTools = [
-    // Breathing & Relaxation
-    {
-      id: "deep-breathing",
-      name: "Deep Breathing Exercise",
-      category: "breathing",
-      duration: 300, // 5 minutes
-      description: "Guided breathing to calm your nervous system",
-      instruction:
-        "Follow the breathing pattern: Inhale for 4 counts, hold for 4, exhale for 6. Repeat.",
-      icon: <Spa />,
-      color: "#4CAF50",
-      steps: [
-        "Find a comfortable position",
-        "Close your eyes gently",
-        "Inhale slowly through your nose for 4 counts",
-        "Hold your breath for 4 counts",
-        "Exhale slowly through your mouth for 6 counts",
-        "Repeat this cycle for 5 minutes",
-      ],
-      benefits: [
-        "Reduces stress hormones",
-        "Lowers blood pressure",
-        "Improves focus",
-        "Calms the mind",
-      ],
-    },
-    {
-      id: "progressive-relaxation",
-      name: "Progressive Muscle Relaxation",
-      category: "relaxation",
-      duration: 600, // 10 minutes
-      description: "Systematically tense and relax muscle groups",
-      instruction:
-        "Tense each muscle group for 5 seconds, then relax completely for 10 seconds.",
-      icon: <Psychology />,
-      color: "#2196F3",
-      steps: [
-        "Start with your toes and feet",
-        "Tense the muscles for 5 seconds",
-        "Release and feel the relaxation",
-        "Move up to your calves and thighs",
-        "Continue with your stomach and chest",
-        "Finish with your arms, shoulders, and face",
-      ],
-      benefits: [
-        "Releases physical tension",
-        "Reduces anxiety",
-        "Improves sleep",
-        "Increases body awareness",
-      ],
-    },
+  // Get personalized tools
+  const { tools: personalizedTools, loading: toolsLoading } = PersonalizedCopingTools();
+  const copingTools = personalizedTools;
 
-    // Physical Activities
-    {
-      id: "quick-walk",
-      name: "Quick Walk",
-      category: "physical",
-      duration: 900, // 15 minutes
-      description: "Gentle walking to release endorphins",
-      instruction:
-        "Walk at a comfortable pace, focusing on your steps and breathing.",
-      icon: <DirectionsWalk />,
-      color: "#FF9800",
-      steps: [
-        "Put on comfortable shoes",
-        "Start with a slow, steady pace",
-        "Focus on your breathing",
-        "Notice your surroundings",
-        "Feel the movement of your body",
-        "Gradually increase pace if comfortable",
-      ],
-      benefits: [
-        "Releases endorphins",
-        "Clears the mind",
-        "Improves mood",
-        "Reduces stress",
-      ],
-    },
-    {
-      id: "gentle-stretching",
-      name: "Gentle Stretching",
-      category: "physical",
-      duration: 480, // 8 minutes
-      description: "Slow, mindful stretching movements",
-      instruction:
-        "Move slowly and mindfully through each stretch, holding for 20-30 seconds.",
-      icon: <SportsEsports />,
-      color: "#9C27B0",
-      steps: [
-        "Start with neck stretches",
-        "Move to shoulder rolls",
-        "Stretch your arms and wrists",
-        "Gentle back stretches",
-        "Hip and leg stretches",
-        "Finish with deep breathing",
-      ],
-      benefits: [
-        "Releases tension",
-        "Improves flexibility",
-        "Increases blood flow",
-        "Calms the mind",
-      ],
-    },
-
-    // Creative Activities
-    {
-      id: "mindful-drawing",
-      name: "Mindful Drawing",
-      category: "creative",
-      duration: 600, // 10 minutes
-      description: "Express emotions through simple drawing",
-      instruction:
-        "Draw whatever comes to mind without worrying about skill or outcome.",
-      icon: <Brush />,
-      color: "#FF5722",
-      steps: [
-        "Get paper and drawing materials",
-        "Start with simple shapes",
-        "Let your hand move freely",
-        "Focus on the process, not the result",
-        "Express your current emotions",
-        "Notice how you feel as you draw",
-      ],
-      benefits: [
-        "Expresses emotions",
-        "Reduces stress",
-        "Improves focus",
-        "Provides creative outlet",
-      ],
-    },
-    {
-      id: "gratitude-journaling",
-      name: "Gratitude Journaling",
-      category: "creative",
-      duration: 300, // 5 minutes
-      description: "Write down things you're grateful for",
-      instruction:
-        "List 3-5 things you appreciate right now, no matter how small.",
-      icon: <Book />,
-      color: "#795548",
-      steps: [
-        "Find a quiet space",
-        "Take a deep breath",
-        "Think of something you appreciate",
-        "Write it down in detail",
-        "Add 2-4 more items",
-        "Reflect on how you feel",
-      ],
-      benefits: [
-        "Shifts perspective",
-        "Improves mood",
-        "Reduces stress",
-        "Increases positivity",
-      ],
-    },
-
-    // Sensory Activities
-    {
-      id: "mindful-tea",
-      name: "Mindful Tea Ritual",
-      category: "sensory",
-      duration: 420, // 7 minutes
-      description: "Sip tea slowly and mindfully",
-      instruction:
-        "Prepare and drink tea with full attention to the experience.",
-      icon: <LocalCafe />,
-      color: "#8BC34A",
-      steps: [
-        "Choose your favorite tea",
-        "Boil water mindfully",
-        "Steep the tea slowly",
-        "Hold the cup and feel its warmth",
-        "Take small, slow sips",
-        "Notice the taste and aroma",
-      ],
-      benefits: [
-        "Creates calm moment",
-        "Engages senses",
-        "Provides comfort",
-        "Slows down mind",
-      ],
-    },
-    {
-      id: "music-therapy",
-      name: "Calming Music Session",
-      category: "sensory",
-      duration: 600, // 10 minutes
-      description: "Listen to calming music mindfully",
-      instruction: "Choose calming music and listen with full attention.",
-      icon: <MusicNote />,
-      color: "#E91E63",
-      steps: [
-        "Choose calming music",
-        "Find a comfortable position",
-        "Close your eyes",
-        "Focus on the melody",
-        "Notice how it makes you feel",
-        "Let the music wash over you",
-      ],
-      benefits: [
-        "Reduces anxiety",
-        "Improves mood",
-        "Provides distraction",
-        "Creates peace",
-      ],
-    },
-
-    // Social Connection
-    {
-      id: "reach-out",
-      name: "Reach Out to Someone",
-      category: "social",
-      duration: 300, // 5 minutes
-      description: "Connect with a friend or family member",
-      instruction: "Call or message someone you care about.",
-      icon: <Phone />,
-      color: "#00BCD4",
-      steps: [
-        "Think of someone you miss",
-        "Send a simple message",
-        "Ask how they're doing",
-        "Share something positive",
-        "Listen to their response",
-        "Express appreciation",
-      ],
-      benefits: [
-        "Reduces loneliness",
-        "Increases oxytocin",
-        "Provides support",
-        "Improves mood",
-      ],
-    },
-  ];
-
+  // Generate categories dynamically from personalized tools
   const categories = [
     { value: "all", label: "All Tools" },
-    { value: "breathing", label: "Breathing & Relaxation" },
-    { value: "physical", label: "Physical Activities" },
-    { value: "creative", label: "Creative Activities" },
-    { value: "sensory", label: "Sensory Activities" },
-    { value: "social", label: "Social Connection" },
+    ...Array.from(new Set(copingTools.map(tool => tool.category))).map(category => ({
+      value: category,
+      label: category.charAt(0).toUpperCase() + category.slice(1) + " Activities"
+    }))
   ];
 
   useEffect(() => {
     loadUsageHistory();
+    checkOnboardingStatus();
   }, []);
+
+  const checkOnboardingStatus = async () => {
+    try {
+      const response = await onboardingAPI.getOnboardingStatus();
+      setOnboardingCompleted(response.data.completed);
+    } catch (error) {
+      console.error("Error checking onboarding status:", error);
+    }
+  };
 
   useEffect(() => {
     if (isActive && !isPaused && activeSession) {
@@ -433,6 +217,56 @@ const CopingTools = () => {
       .map(([name, count]) => ({ name, count }));
   };
 
+  const handleDownloadCSV = async () => {
+    setDownloading(true);
+    try {
+      const response = await reportsAPI.downloadCSV();
+      const blob = new Blob([response.data], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'mood2food_report.csv';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      setSuccess('CSV report downloaded successfully!');
+    } catch (error) {
+      setError('Failed to download CSV report');
+    } finally {
+      setDownloading(false);
+    }
+  };
+
+  const handleDownloadPDF = async () => {
+    setDownloading(true);
+    try {
+      const response = await reportsAPI.downloadPDF();
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'mood2food_report.pdf';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      setSuccess('PDF report downloaded successfully!');
+    } catch (error) {
+      setError('Failed to download PDF report');
+    } finally {
+      setDownloading(false);
+    }
+  };
+
+  if (toolsLoading) {
+    return (
+      <Box sx={{ p: 3, display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
   return (
     <Box>
       <Box
@@ -442,15 +276,42 @@ const CopingTools = () => {
         mb={3}
       >
         <Typography variant="h4" gutterBottom>
-          Coping Tools
+          Your Personalized Coping Tools
         </Typography>
-        <Button
-          variant="outlined"
-          startIcon={<History />}
-          onClick={() => setHistoryDialogOpen(true)}
-        >
-          View History
-        </Button>
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <Button
+            variant="outlined"
+            startIcon={<History />}
+            onClick={() => setHistoryDialogOpen(true)}
+          >
+            View History
+          </Button>
+          <Button
+            variant="outlined"
+            startIcon={<Download />}
+            onClick={handleDownloadCSV}
+            disabled={downloading}
+          >
+            Download CSV
+          </Button>
+          <Button
+            variant="outlined"
+            startIcon={<Download />}
+            onClick={handleDownloadPDF}
+            disabled={downloading}
+          >
+            Download PDF
+          </Button>
+          {onboardingCompleted === false && (
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => window.location.href = '/onboarding'}
+            >
+              Complete Setup
+            </Button>
+          )}
+        </Box>
       </Box>
 
       <Typography variant="subtitle1" color="text.secondary" gutterBottom>

@@ -9,15 +9,17 @@ import {
   CircularProgress,
   Alert,
   Chip,
+  Button,
 } from "@mui/material";
 import {
   Lightbulb,
   EmojiEvents,
   Restaurant,
   TrendingUp,
-  Psychology,
+  CloudUpload,
+  Analytics,
 } from "@mui/icons-material";
-import { dashboardAPI, mlAPI } from "../services/api";
+import { dashboardAPI, mlAPI, onboardingAPI } from "../services/api";
 import FoodLogForm from "../components/FoodLogForm";
 import TodayFoodLogs from "../components/TodayFoodLogs";
 
@@ -36,6 +38,9 @@ const Dashboard = () => {
   const [refreshFoodLogs, setRefreshFoodLogs] = useState(0);
   const [currentFactIndex, setCurrentFactIndex] = useState(0);
   const [timeRemaining, setTimeRemaining] = useState(5);
+  const [onboardingCompleted, setOnboardingCompleted] = useState(null);
+  const [showOnboardingPrompt, setShowOnboardingPrompt] = useState(false);
+
 
   // Fun facts about emotional eating
   const funFacts = useMemo(() => [
@@ -119,7 +124,18 @@ const Dashboard = () => {
   useEffect(() => {
     loadDashboardData();
     setFunFactOfTheDay();
+    checkOnboardingStatus();
   }, []);
+
+  const checkOnboardingStatus = async () => {
+    try {
+      const response = await onboardingAPI.getOnboardingStatus();
+      setOnboardingCompleted(response.data.completed);
+      setShowOnboardingPrompt(!response.data.completed);
+    } catch (error) {
+      console.error("Error checking onboarding status:", error);
+    }
+  };
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -168,6 +184,8 @@ const Dashboard = () => {
     }
   };
 
+
+
   const loadDashboardData = async () => {
     try {
       setLoading(true);
@@ -179,6 +197,13 @@ const Dashboard = () => {
       setLoading(false);
     }
   };
+
+  // Refresh dashboard data when food logs are added
+  useEffect(() => {
+    if (refreshFoodLogs > 0) {
+      loadDashboardData();
+    }
+  }, [refreshFoodLogs]);
 
   if (loading) {
     return (
@@ -203,6 +228,25 @@ const Dashboard = () => {
 
   return (
     <Box sx={{ py: 3, width: "100%" }}>
+      {/* Onboarding Completion Prompt */}
+      {showOnboardingPrompt && (
+        <Alert 
+          severity="info" 
+          sx={{ mb: 3 }}
+          action={
+            <Button 
+              color="inherit" 
+              size="small"
+              onClick={() => window.location.href = '/onboarding'}
+            >
+              Complete Setup
+            </Button>
+          }
+        >
+          Complete your profile setup to get personalized coping tools and insights!
+        </Alert>
+      )}
+
       {/* Header Section */}
       <Box mb={3}>
         <Typography variant="h4" sx={{ color: theme.palette.text.primary, fontWeight: 700, mb: 1 }}>

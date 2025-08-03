@@ -137,4 +137,21 @@ public class ChatController {
                     .body("Error fetching learning stats: " + e.getMessage());
         }
     }
+
+    @DeleteMapping("/clear")
+    public ResponseEntity<?> clearChatHistory(@RequestHeader("Authorization") String token) {
+        try {
+            UUID userId = jwtUtil.extractUserId(token.substring(7));
+            Optional<Student> studentOpt = studentRepository.findById(userId);
+            if (studentOpt.isEmpty())
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            Student student = studentOpt.get();
+            
+            chatService.clearChatHistory(student);
+            return ResponseEntity.ok().body("Chat history cleared successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error clearing chat history: " + e.getMessage());
+        }
+    }
 }

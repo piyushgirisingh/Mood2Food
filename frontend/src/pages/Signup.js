@@ -44,7 +44,8 @@ const Signup = () => {
     const result = await signup(formData);
     
     if (result.success) {
-      navigate('/dashboard');
+      // New users go to onboarding
+      navigate('/onboarding');
     } else {
       setError(result.error);
     }

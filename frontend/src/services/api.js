@@ -97,6 +97,21 @@ export const foodInsightsAPI = {
   getRecentFoodInsights: () => api.get('/api/food-insights/recent'),
 };
 
+// Onboarding API
+export const onboardingAPI = {
+  completeOnboarding: (onboardingData) => api.post('/api/onboarding/complete', onboardingData),
+  getOnboardingStatus: () => api.get('/api/onboarding/status'),
+  getPersonalizedCopingTools: () => api.get('/api/onboarding/coping-tools'),
+  getSupportContacts: () => api.get('/api/onboarding/support-contacts'),
+  getCalmingSongs: () => api.get('/api/onboarding/calming-songs'),
+};
+
+// Reports API
+export const reportsAPI = {
+  downloadCSV: () => api.get('/api/reports/download/csv', { responseType: 'blob' }),
+  downloadPDF: () => api.get('/api/reports/download/pdf', { responseType: 'blob' }),
+};
+
 // ML API - Direct calls to ML service
 export const mlAPI = {
   classifyEmotion: async (reason) => {
@@ -147,7 +162,9 @@ export const mlAPI = {
       headers: { "Content-Type": "application/json" }
     });
     return res.json();
-  }
+  },
+  
+
 };
 
 export default api; 

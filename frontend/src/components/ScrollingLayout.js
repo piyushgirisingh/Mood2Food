@@ -35,16 +35,16 @@ import {
   Psychology,
   Insights,
   Restaurant,
-  Timer,
   TrendingUp,
   EmojiEvents,
   Lightbulb,
+  Refresh as RefreshIcon,
 } from "@mui/icons-material";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { useThemeMode } from "../contexts/ThemeContext";
 import Chat from "../pages/Chat";
-import { dashboardAPI } from "../services/api";
+import { dashboardAPI, mlAPI } from "../services/api";
 
 const ScrollingLayout = ({ children }) => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -64,6 +64,11 @@ const ScrollingLayout = ({ children }) => {
   const [showChat, setShowChat] = useState(false);
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showRefreshMessage, setShowRefreshMessage] = useState(false);
+  const [dailyTip, setDailyTip] = useState({
+    tip: "Try the 5-minute rule: wait 5 minutes before giving in to emotional eating urges.",
+    category: "Mindful Eating"
+  });
 
   const sections = [
     { path: "/", title: "Dashboard" },
@@ -76,7 +81,6 @@ const ScrollingLayout = ({ children }) => {
     { icon: <Restaurant />, text: "Log Food", action: () => navigate("/food-log") },
     { icon: <Psychology />, text: "Coping Tools", action: () => navigate("/coping-tools") },
     { icon: <Insights />, text: "View Insights", action: () => navigate("/insights") },
-    { icon: <Timer />, text: "Mindful Timer", action: () => navigate("/coping-tools") },
   ];
 
   const handleMenuOpen = (event) => {
@@ -99,20 +103,74 @@ const ScrollingLayout = ({ children }) => {
     toggleMode();
   };
 
+  // Fetch daily tip
+  const fetchDailyTip = async () => {
+    try {
+      const response = await mlAPI.getFactOfTheDay();
+      if (response.success && response.fact) {
+        setDailyTip({
+          tip: response.fact.tip || response.fact.fact,
+          category: response.fact.category || "Daily Tip"
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching daily tip:", error);
+      // Keep the default tip if API fails
+    }
+  };
+
   // Fetch dashboard data
+  const fetchDashboardData = async () => {
+    try {
+      console.log('ScrollingLayout: Fetching dashboard data...');
+      setLoading(true);
+      const response = await dashboardAPI.getDashboard();
+      console.log('ScrollingLayout: Dashboard data received:', response.data);
+      setDashboardData(response.data);
+      
+      // Show success message briefly
+      setShowRefreshMessage(true);
+      setTimeout(() => setShowRefreshMessage(false), 2000);
+    } catch (error) {
+      console.error("Error fetching dashboard data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        const response = await dashboardAPI.getDashboard();
-        setDashboardData(response.data);
-      } catch (error) {
-        console.error("Error fetching dashboard data:", error);
-      } finally {
-        setLoading(false);
+    fetchDashboardData();
+    fetchDailyTip();
+  }, []);
+
+  // Listen for food log updates
+  useEffect(() => {
+    const handleFoodLogUpdate = () => {
+      console.log('ScrollingLayout: Received foodLogUpdated event, refreshing dashboard data...');
+      fetchDashboardData();
+    };
+
+    const handleStorageChange = (e) => {
+      if (e.key === 'foodLogUpdated') {
+        console.log('ScrollingLayout: Detected localStorage change, refreshing dashboard data...');
+        fetchDashboardData();
       }
     };
 
-    fetchDashboardData();
+    const handleDashboardRefresh = (e) => {
+      console.log('ScrollingLayout: Received dashboardRefresh event, refreshing dashboard data...');
+      fetchDashboardData();
+    };
+
+    window.addEventListener('foodLogUpdated', handleFoodLogUpdate);
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('dashboardRefresh', handleDashboardRefresh);
+    
+    return () => {
+      window.removeEventListener('foodLogUpdated', handleFoodLogUpdate);
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('dashboardRefresh', handleDashboardRefresh);
+    };
   }, []);
 
   return (
@@ -373,9 +431,40 @@ const ScrollingLayout = ({ children }) => {
           {/* Today's Progress */}
           <Card sx={{ mb: 3, bgcolor: "background.default" }}>
             <CardContent sx={{ p: 2 }}>
-              <Typography variant="h6" sx={{ mb: 2, display: "flex", alignItems: "center", gap: 1 }}>
-                <TrendingUp color="primary" />
-                Today's Progress
+              <Typography variant="h6" sx={{ mb: 2, display: "flex", alignItems: "center", gap: 1, justifyContent: "space-between" }}>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <TrendingUp color="primary" />
+                  Today's Progress
+                </Box>
+                <IconButton 
+                  size="small" 
+                  onClick={() => {
+                    console.log('ScrollingLayout: Manual refresh clicked');
+                    setLoading(true);
+                    fetchDashboardData();
+                    // Force a second refresh after a short delay
+                    setTimeout(() => {
+                      console.log('ScrollingLayout: Forcing second refresh...');
+                      fetchDashboardData();
+                    }, 1000);
+                  }}
+                  disabled={loading}
+                  sx={{ 
+                    color: "primary.main",
+                    "&:hover": { backgroundColor: "primary.main", color: "white" },
+                    "&:disabled": { color: "text.disabled" },
+                    border: "1px solid",
+                    borderColor: "primary.main"
+                  }}
+                >
+                  <RefreshIcon sx={{ 
+                    animation: loading ? "spin 1s linear infinite" : "none",
+                    "@keyframes spin": {
+                      "0%": { transform: "rotate(0deg)" },
+                      "100%": { transform: "rotate(360deg)" }
+                    }
+                  }} />
+                </IconButton>
               </Typography>
               <Box sx={{ mb: 2 }}>
                 <Typography variant="body2" color="text.secondary">
@@ -401,21 +490,40 @@ const ScrollingLayout = ({ children }) => {
                   {loading ? "..." : `${dashboardData?.currentStreak || 0} days`}
                 </Typography>
               </Box>
+              
+              {showRefreshMessage && (
+                <Box sx={{ mt: 2, p: 1, bgcolor: "success.light", borderRadius: 1 }}>
+                  <Typography variant="caption" color="success.contrastText">
+                    ✓ Data refreshed successfully!
+                  </Typography>
+                </Box>
+              )}
+              
+
             </CardContent>
           </Card>
 
           {/* Quick Tips */}
           <Card sx={{ bgcolor: "background.default" }}>
             <CardContent sx={{ p: 2 }}>
-              <Typography variant="h6" sx={{ mb: 2, display: "flex", alignItems: "center", gap: 1 }}>
-                <EmojiEvents color="primary" />
-                Daily Tip
-              </Typography>
+              <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 2 }}>
+                <Typography variant="h6" sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <EmojiEvents color="primary" />
+                  Daily Tip
+                </Typography>
+                <IconButton
+                  size="small"
+                  onClick={fetchDailyTip}
+                  sx={{ color: theme.palette.primary.main }}
+                >
+                  <RefreshIcon fontSize="small" />
+                </IconButton>
+              </Box>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                Try the 5-minute rule: wait 5 minutes before giving in to emotional eating urges.
+                {dailyTip.tip}
               </Typography>
               <Chip
-                label="Mindful Eating"
+                label={dailyTip.category}
                 size="small"
                 color="primary"
                 variant="outlined"

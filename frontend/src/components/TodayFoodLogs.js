@@ -132,7 +132,16 @@ const TodayFoodLogs = ({ refreshTrigger }) => {
 
   if (foodLogs.length === 0) {
     return (
-      <Card sx={{ mt: 2 }}>
+      <Card sx={{ 
+        mt: 2,
+        background: theme.palette.mode === 'dark' 
+          ? "linear-gradient(135deg, #1E293B 0%, #334155 100%)"
+          : "linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%)",
+        color: theme.palette.text.primary,
+        border: theme.palette.mode === 'dark' 
+          ? "1px solid #475569"
+          : "1px solid #E2E8F0",
+      }}>
         <CardContent>
           <Box display="flex" alignItems="center" justifyContent="center" p={3}>
             <RestaurantIcon sx={{ fontSize: 48, color: 'text.secondary', mr: 2 }} />
@@ -156,10 +165,19 @@ const TodayFoodLogs = ({ refreshTrigger }) => {
           <Grid item xs={12} key={foodLog.id}>
             <Card 
               sx={{ 
+                background: theme.palette.mode === 'dark' 
+                  ? "linear-gradient(135deg, #1E293B 0%, #334155 100%)"
+                  : "linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%)",
+                color: theme.palette.text.primary,
+                border: theme.palette.mode === 'dark' 
+                  ? "1px solid #475569"
+                  : "1px solid #E2E8F0",
                 transition: 'all 0.2s',
                 '&:hover': {
                   transform: 'translateY(-2px)',
-                  boxShadow: 3,
+                  boxShadow: theme.palette.mode === 'dark'
+                    ? "0 8px 32px rgba(30, 41, 59, 0.3)"
+                    : "0 8px 32px rgba(0, 0, 0, 0.1)",
                 }
               }}
             >

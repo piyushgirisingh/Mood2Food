@@ -13,8 +13,11 @@ import Chat from "./pages/Chat";
 import CopingTools from "./pages/CopingTools";
 import Insights from "./pages/Insights";
 import FoodLog from "./pages/FoodLog";
+import Reports from "./pages/Reports";
+import Onboarding from "./components/Onboarding";
 
 import ProtectedRoute from "./components/ProtectedRoute";
+import OnboardingCheck from "./components/OnboardingCheck";
 import ScrollingLayout from "./components/ScrollingLayout";
 
 import { AuthProvider } from "./contexts/AuthContext";
@@ -38,40 +41,58 @@ function App() {
             <Route
               path="/dashboard"
               element={
-                <ProtectedRoute>
+                <OnboardingCheck>
                   <ScrollingLayout>
                     <Dashboard />
                   </ScrollingLayout>
-                </ProtectedRoute>
+                </OnboardingCheck>
               }
             />
             <Route
               path="/coping-tools"
               element={
-                <ProtectedRoute>
+                <OnboardingCheck>
                   <ScrollingLayout>
                     <CopingTools />
                   </ScrollingLayout>
-                </ProtectedRoute>
+                </OnboardingCheck>
               }
             />
             <Route
               path="/insights"
               element={
-                <ProtectedRoute>
+                <OnboardingCheck>
                   <ScrollingLayout>
                     <Insights />
                   </ScrollingLayout>
-                </ProtectedRoute>
+                </OnboardingCheck>
+              }
+            />
+            <Route
+              path="/reports"
+              element={
+                <OnboardingCheck>
+                  <ScrollingLayout>
+                    <Reports />
+                  </ScrollingLayout>
+                </OnboardingCheck>
               }
             />
             <Route
               path="/food-log"
               element={
-                <ProtectedRoute>
+                <OnboardingCheck>
                   <ScrollingLayout>
                     <FoodLog />
                   </ScrollingLayout>
+                </OnboardingCheck>
+              }
+            />
+            <Route
+              path="/onboarding"
+              element={
+                <ProtectedRoute>
+                  <Onboarding />
                 </ProtectedRoute>
               }
             />

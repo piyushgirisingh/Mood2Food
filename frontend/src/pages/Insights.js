@@ -26,8 +26,6 @@ import {
   Tabs,
   Tab,
   Rating,
-  Avatar,
-  Badge,
 } from "@mui/material";
 import {
   Add,
@@ -36,7 +34,6 @@ import {
   Psychology,
   Restaurant,
   AccessTime,
-  EmojiEmotions,
   Timeline,
   Insights as InsightsIcon,
   Star,
@@ -50,7 +47,6 @@ import {
   Favorite,
   Bookmark,
   Share,
-  CalendarToday,
   PsychologyAlt,
   SelfImprovement,
   Spa,
@@ -191,42 +187,7 @@ const Insights = () => {
     "What small victory can I celebrate?",
   ];
 
-  // Personal Growth Challenges
-  const growthChallenges = [
-    {
-      title: "Mindful Eating Challenge",
-      duration: "7 days",
-      description: "Practice mindful eating for one week",
-      tasks: [
-        "Eat without distractions (no phone/TV)",
-        "Take time to appreciate your food",
-        "Stop eating when 80% full",
-        "Notice hunger and fullness cues",
-      ],
-    },
-    {
-      title: "Emotion Journal Challenge",
-      duration: "14 days",
-      description: "Track your emotions and eating patterns",
-      tasks: [
-        "Write down your emotions before eating",
-        "Identify triggers and patterns",
-        "Note successful coping strategies",
-        "Celebrate small wins",
-      ],
-    },
-    {
-      title: "Healthy Coping Challenge",
-      duration: "21 days",
-      description: "Replace emotional eating with healthy alternatives",
-      tasks: [
-        "Try a new coping strategy each day",
-        "Practice deep breathing exercises",
-        "Engage in physical activity",
-        "Connect with supportive people",
-      ],
-    },
-  ];
+
 
   return (
     <Container maxWidth="xl" sx={{ py: 3 }}>
@@ -277,7 +238,6 @@ const Insights = () => {
           <Tab label="My Insights" />
           <Tab label="Growth Resources" />
           <Tab label="Weekly Reflection" />
-          <Tab label="Challenges" />
         </Tabs>
       </Box>
 
@@ -395,10 +355,10 @@ const Insights = () => {
             <Card>
               <CardContent>
                 <Box display="flex" alignItems="center" mb={2}>
-                  <Timeline sx={{ mr: 1, color: "#8B5CF6" }} />
+                  <Timeline sx={{ mr: 1, color: theme.palette.primary.main }} />
                   <Typography
                     variant="h6"
-                    sx={{ color: "#F8FAFC", fontWeight: 600 }}
+                    sx={{ color: theme.palette.text.primary, fontWeight: 600 }}
                   >
                     All Insights ({insights.length})
                   </Typography>
@@ -429,7 +389,7 @@ const Insights = () => {
                       <React.Fragment key={insight.id || index}>
                         <ListItem sx={{ px: 0 }}>
                           <ListItemIcon>
-                            <Lightbulb sx={{ color: "#8B5CF6" }} />
+                            <Lightbulb sx={{ color: theme.palette.primary.main }} />
                           </ListItemIcon>
                           <ListItemText
                             primary={insight.message}
@@ -438,14 +398,14 @@ const Insights = () => {
                             ).toLocaleDateString()}
                             primaryTypographyProps={{
                               sx: {
-                                color: "#F8FAFC",
+                                color: theme.palette.text.primary,
                                 lineHeight: 1.5,
                                 mb: 1,
                               },
                             }}
                             secondaryTypographyProps={{
                               sx: {
-                                color: "#9CA3AF",
+                                color: theme.palette.text.secondary,
                               },
                             }}
                           />
@@ -488,13 +448,13 @@ const Insights = () => {
                     </Box>
                     <Typography
                       variant="h6"
-                      sx={{ color: "#F8FAFC", fontWeight: 600 }}
+                      sx={{ color: theme.palette.text.primary, fontWeight: 600 }}
                     >
                       {resource.title}
                     </Typography>
                   </Box>
 
-                  <Typography variant="body2" sx={{ color: "#CBD5E1", mb: 2 }}>
+                  <Typography variant="body2" sx={{ color: theme.palette.text.secondary, mb: 2 }}>
                     {resource.description}
                   </Typography>
 
@@ -502,10 +462,10 @@ const Insights = () => {
                     sx={{ backgroundColor: "transparent", boxShadow: "none" }}
                   >
                     <AccordionSummary
-                      expandIcon={<ExpandMore sx={{ color: "#8B5CF6" }} />}
+                      expandIcon={<ExpandMore sx={{ color: theme.palette.primary.main }} />}
                       sx={{
                         "& .MuiAccordionSummary-content": {
-                          color: "#8B5CF6",
+                          color: theme.palette.primary.main,
                           fontWeight: 500,
                         },
                       }}
@@ -518,13 +478,13 @@ const Insights = () => {
                           <ListItem key={tipIndex} sx={{ px: 0 }}>
                             <ListItemIcon sx={{ minWidth: 32 }}>
                               <CheckCircle
-                                sx={{ fontSize: 16, color: "#10B981" }}
+                                sx={{ fontSize: 16, color: theme.palette.success.main }}
                               />
                             </ListItemIcon>
                             <ListItemText
                               primary={tip}
                               primaryTypographyProps={{
-                                sx: { color: "#CBD5E1", fontSize: "0.875rem" },
+                                sx: { color: theme.palette.text.secondary, fontSize: "0.875rem" },
                               }}
                             />
                           </ListItem>
@@ -546,16 +506,16 @@ const Insights = () => {
             <Card>
               <CardContent>
                 <Box display="flex" alignItems="center" mb={3}>
-                  <PsychologyAlt sx={{ mr: 1, color: "#8B5CF6" }} />
+                  <PsychologyAlt sx={{ mr: 1, color: theme.palette.primary.main }} />
                   <Typography
                     variant="h6"
-                    sx={{ color: "#F8FAFC", fontWeight: 600 }}
+                    sx={{ color: theme.palette.text.primary, fontWeight: 600 }}
                   >
                     Weekly Reflection Prompts
                   </Typography>
                 </Box>
 
-                <Typography variant="body2" sx={{ color: "#CBD5E1", mb: 3 }}>
+                <Typography variant="body2" sx={{ color: theme.palette.text.secondary, mb: 3 }}>
                   Take time each week to reflect on your journey. Choose a
                   prompt and write your thoughts below.
                 </Typography>
@@ -585,9 +545,9 @@ const Insights = () => {
                   placeholder="Choose a prompt above and write your reflection here..."
                   sx={{
                     "& .MuiOutlinedInput-root": {
-                      backgroundColor: "#374151",
+                      backgroundColor: theme.palette.mode === 'dark' ? '#374151' : '#f8fafc',
                       "& textarea": {
-                        color: "#F8FAFC",
+                        color: theme.palette.text.primary,
                       },
                     },
                   }}
@@ -611,123 +571,11 @@ const Insights = () => {
             </Card>
           </Grid>
 
-          <Grid item xs={12} md={4}>
-            <Card>
-              <CardContent>
-                <Box display="flex" alignItems="center" mb={2}>
-                  <CalendarToday sx={{ mr: 1, color: "#8B5CF6" }} />
-                  <Typography
-                    variant="h6"
-                    sx={{ color: "#F8FAFC", fontWeight: 600 }}
-                  >
-                    Reflection Calendar
-                  </Typography>
-                </Box>
 
-                <Typography variant="body2" sx={{ color: "#CBD5E1", mb: 2 }}>
-                  Track your weekly reflections and see your progress over time.
-                </Typography>
-
-                <Box textAlign="center" py={3}>
-                  <Typography variant="h4" sx={{ color: "#8B5CF6", mb: 1 }}>
-                    12
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: "#CBD5E1" }}>
-                    Weeks of Reflection
-                  </Typography>
-                </Box>
-
-                <Box textAlign="center">
-                  <Typography variant="h4" sx={{ color: "#10B981", mb: 1 }}>
-                    8
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: "#CBD5E1" }}>
-                    Consecutive Weeks
-                  </Typography>
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
         </Grid>
       )}
 
-      {/* Challenges Tab */}
-      {selectedTab === 3 && (
-        <Grid container spacing={3}>
-          {growthChallenges.map((challenge, index) => (
-            <Grid item xs={12} md={4} key={index}>
-              <Card sx={{ height: "100%" }}>
-                <CardContent>
-                  <Box display="flex" alignItems="center" mb={2}>
-                    <Badge
-                      badgeContent={challenge.duration}
-                      color="primary"
-                      sx={{
-                        "& .MuiBadge-badge": {
-                          backgroundColor: "#8B5CF6",
-                        },
-                      }}
-                    >
-                      <Avatar sx={{ backgroundColor: "#8B5CF6" }}>
-                        <EmojiEmotions />
-                      </Avatar>
-                    </Badge>
-                    <Box ml={2}>
-                      <Typography
-                        variant="h6"
-                        sx={{ color: "#F8FAFC", fontWeight: 600 }}
-                      >
-                        {challenge.title}
-                      </Typography>
-                      <Typography variant="body2" sx={{ color: "#CBD5E1" }}>
-                        {challenge.description}
-                      </Typography>
-                    </Box>
-                  </Box>
 
-                  <Typography variant="body2" sx={{ color: "#CBD5E1", mb: 2 }}>
-                    Complete these tasks to build healthy habits:
-                  </Typography>
-
-                  <List dense>
-                    {challenge.tasks.map((task, taskIndex) => (
-                      <ListItem key={taskIndex} sx={{ px: 0 }}>
-                        <ListItemIcon sx={{ minWidth: 32 }}>
-                          <CheckCircle
-                            sx={{ fontSize: 16, color: "#10B981" }}
-                          />
-                        </ListItemIcon>
-                        <ListItemText
-                          primary={task}
-                          primaryTypographyProps={{
-                            sx: { color: "#CBD5E1", fontSize: "0.875rem" },
-                          }}
-                        />
-                      </ListItem>
-                    ))}
-                  </List>
-
-                  <Button
-                    variant="outlined"
-                    fullWidth
-                    sx={{
-                      mt: 2,
-                      borderColor: "#8B5CF6",
-                      color: "#8B5CF6",
-                      "&:hover": {
-                        borderColor: "#7C3AED",
-                        backgroundColor: "rgba(139, 92, 246, 0.1)",
-                      },
-                    }}
-                  >
-                    Start Challenge
-                  </Button>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-      )}
     </Container>
   );
 };

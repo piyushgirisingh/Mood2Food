@@ -2,7 +2,9 @@ package com.Mood2Food.mood2food.service;
 
 import com.Mood2Food.mood2food.entity.ChatMessage;
 import com.Mood2Food.mood2food.entity.Student;
+import com.Mood2Food.mood2food.entity.FoodLog;
 import com.Mood2Food.mood2food.repository.ChatMessageRepository;
+import com.Mood2Food.mood2food.repository.FoodLogRepository;
 import com.Mood2Food.mood2food.service.FoodInsightService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +22,9 @@ import java.util.ArrayList;
 public class ChatService {
     @Autowired
     private ChatMessageRepository chatMessageRepository;
+    
+    @Autowired
+    private FoodLogRepository foodLogRepository;
     
     @Autowired
     private FoodInsightService foodInsightService;
@@ -167,6 +172,12 @@ private String getOpenAIReply(String userMessage, String emotion, double confide
         List<ChatMessage> recentHistory = chatMessageRepository
             .findTop10ByStudentOrderByTimestampDesc(student);
         
+        // Get actual food logs for accurate context (limit to 5 most recent)
+        List<FoodLog> allFoodLogs = foodLogRepository.findByStudentOrderByEatingTimeDesc(student);
+        List<FoodLog> recentFoodLogs = allFoodLogs.stream()
+            .limit(5)
+            .collect(java.util.stream.Collectors.toList());
+        
         // Get food log insights for personalized context
         Map<String, Object> foodInsights = foodInsightService.getRecentFoodInsights(student);
         
@@ -179,12 +190,25 @@ private String getOpenAIReply(String userMessage, String emotion, double confide
             historyItem.put("timestamp", msg.getTimestamp().toString());
             conversationHistory.add(historyItem);
         }
+        
+        // Build food log context
+        List<Map<String, Object>> foodLogContext = new ArrayList<>();
+        for (FoodLog foodLog : recentFoodLogs) {
+            Map<String, Object> foodItem = new HashMap<>();
+            foodItem.put("food", foodLog.getFoodItem());
+            foodItem.put("time", foodLog.getEatingTime().toString());
+            foodItem.put("emotion", foodLog.getEmotionDescription());
+            foodItem.put("meal_type", foodLog.getMealType());
+            foodItem.put("quantity", foodLog.getQuantity());
+            foodLogContext.add(foodItem);
+        }
 
         java.util.Map<String, Object> body = new java.util.HashMap<>();
         body.put("reason", userMessage);
         body.put("user_id", student.getId().toString());
         body.put("conversation_history", conversationHistory);
         body.put("food_insights", foodInsights);
+        body.put("recent_food_logs", foodLogContext);
 
         try {
             String jsonBody = objectMapper.writeValueAsString(body);
@@ -239,6 +263,16 @@ private String getOpenAIReply(String userMessage, String emotion, double confide
             Map<String, Object> fallback = new HashMap<>();
             fallback.put("error", "Pattern analysis unavailable");
             return fallback;
+        }
+    }
+
+    public void clearChatHistory(Student student) {
+        try {
+            List<ChatMessage> messages = chatMessageRepository.findByStudentOrderByTimestampAsc(student);
+            chatMessageRepository.deleteAll(messages);
+        } catch (Exception e) {
+            System.err.println("Error clearing chat history: " + e.getMessage());
+            throw new RuntimeException("Failed to clear chat history", e);
         }
     }
 }

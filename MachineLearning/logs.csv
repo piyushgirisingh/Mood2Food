@@ -36,3 +36,29 @@ timestamp,text,emotion,confidence,user_id
 2025-08-02T11:57:10.370343,[Emotional Eating Support Context] hi,neutral,95.22000551223756,330cf335-00ac-4974-b159-ad986c4ce2db
 2025-08-02T11:57:35.731864,[Emotional Eating Support Context] what times do i eat the most?,neutral,91.89707636833192,330cf335-00ac-4974-b159-ad986c4ce2db
 2025-08-02T11:58:31.241268,[Emotional Eating Support Context] Monster Trucks,neutral,87.39115595817566,330cf335-00ac-4974-b159-ad986c4ce2db
+2025-08-02T15:24:33.534395,"[Emotional Eating Support Context] ugh, work stress- want chocolate",sadness,86.02975010871887,4f63ce14-6c0b-4d78-a6f7-e304b79d7edb
+2025-08-02T17:57:23.359713,[Emotional Eating Support Context] can you give me insights through my food logs about my emotional eating?,neutral,93.23959946632384,e8c17a70-974e-4ba5-a598-1bfcb0f209a7
+2025-08-02T17:58:54.528853,[Emotional Eating Support Context] what did i eat this evening,neutral,88.91915082931519,e8c17a70-974e-4ba5-a598-1bfcb0f209a7
+2025-08-02T18:07:00.961793,[Emotional Eating Support Context] what did I eat?,neutral,88.81625533103943,e8c17a70-974e-4ba5-a598-1bfcb0f209a7
+2025-08-02T18:08:18.660096,[Emotional Eating Support Context] what did I eat ?,neutral,88.78810405731201,e8c17a70-974e-4ba5-a598-1bfcb0f209a7
+2025-08-02T18:10:15.316765,[Emotional Eating Support Context] what did I have receltly,neutral,85.52244901657104,e8c17a70-974e-4ba5-a598-1bfcb0f209a7
+2025-08-02T18:11:46.711889,[Emotional Eating Support Context] what did i have last time?,neutral,89.20446038246155,e8c17a70-974e-4ba5-a598-1bfcb0f209a7
+2025-08-02T18:15:09.390484,[Emotional Eating Support Context] what did i eat,neutral,88.23804259300232,e8c17a70-974e-4ba5-a598-1bfcb0f209a7
+2025-08-02T18:16:36.139162,[Emotional Eating Support Context] what did i eat last time,neutral,88.92230987548828,e8c17a70-974e-4ba5-a598-1bfcb0f209a7
+2025-08-02T18:17:01.255354,[Emotional Eating Support Context] what time did i eat pizza,neutral,87.6069962978363,e8c17a70-974e-4ba5-a598-1bfcb0f209a7
+2025-08-02T18:17:10.263208,"[Emotional Eating Support Context] hey 
+",joy,89.5126223564148,e8c17a70-974e-4ba5-a598-1bfcb0f209a7
+2025-08-02T18:17:29.510861,"[Emotional Eating Support Context] whats up 
+i couldn'st sleep",sadness,88.08656930923462,e8c17a70-974e-4ba5-a598-1bfcb0f209a7
+2025-08-02T18:18:00.689318,[Emotional Eating Support Context] am i making healthy choice,neutral,62.56295442581177,e8c17a70-974e-4ba5-a598-1bfcb0f209a7
+2025-08-02T18:18:46.318774,[Emotional Eating Support Context] am i eating emotionally ?,neutral,75.99420547485352,e8c17a70-974e-4ba5-a598-1bfcb0f209a7
+2025-08-02T18:27:35.669068,what did i eat last time?,neutral,73.94938468933105,d283d0f7-a227-4fba-ba45-cfc83b431518
+2025-08-02T20:26:32.635330,hi,neutral,90.76638221740724,e8c17a70-974e-4ba5-a598-1bfcb0f209a7
+2025-08-02T20:27:06.067763,i need to know my patterns if i have been eating emotionally or not,sadness,46.98901176452637,e8c17a70-974e-4ba5-a598-1bfcb0f209a7
+2025-08-02T20:28:17.618911,hi,neutral,90.76638221740724,330cf335-00ac-4974-b159-ad986c4ce2db
+2025-08-02T20:28:47.885491,can you give me insights about my food eating habits,neutral,91.650390625,330cf335-00ac-4974-b159-ad986c4ce2db
+2025-08-02T20:33:48.387834,"Hello, how are you?",neutral,64.52201008796692,d283d0f7-a227-4fba-ba45-cfc83b431518
+2025-08-03T09:20:18.737513,hi,neutral,90.76638221740724,e8c17a70-974e-4ba5-a598-1bfcb0f209a7
+2025-08-03T09:30:23.141431,Hi,neutral,93.16708445549013,e8c17a70-974e-4ba5-a598-1bfcb0f209a7
+2025-08-03T09:30:40.968649,good morning!,joy,80.29431700706482,e8c17a70-974e-4ba5-a598-1bfcb0f209a7
+2025-08-03T09:31:26.012167,i am thinking of having breakfast and a coffee. It's 9:30 right now but i woke up at 8:15,surprise,69.91976499557495,e8c17a70-974e-4ba5-a598-1bfcb0f209a7

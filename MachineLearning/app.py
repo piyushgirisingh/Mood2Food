@@ -137,7 +137,7 @@ Keep responses under 100 words, practical, and friendly."""
         return None
 
 
-def generate_openai_response_with_history(user_message, emotion, confidence, conversation_history, user_id):
+def generate_openai_response_with_history(user_message, emotion, confidence, conversation_history, user_id, recent_food_logs=None):
     """Generate an OpenAI response with conversation history, pattern awareness, and reinforcement learning"""
     try:
         print(f"DEBUG: Using AzureOpenAI for EMOTIONAL eating with HISTORY - emotion '{emotion}' with {confidence:.1f}% confidence")
@@ -155,6 +155,13 @@ def generate_openai_response_with_history(user_message, emotion, confidence, con
             history_context = "\n\nRecent conversation context:\n"
             for msg in reversed(recent_messages):  # Show in chronological order
                 history_context += f"{msg['sender']}: {msg['message']}\n"
+        
+        # Add actual food log context
+        food_context = ""
+        if recent_food_logs and len(recent_food_logs) > 0:
+            food_context = "\n\nUser's recent food logs (use ONLY these actual foods, do NOT make up foods):\n"
+            for food_log in recent_food_logs:
+                food_context += f"- {food_log.get('food', 'Unknown')} ({food_log.get('meal_type', 'Unknown')}) at {food_log.get('time', 'Unknown')} - Emotion: {food_log.get('emotion', 'Unknown')}\n"
         
         pattern_context = ""
         if patterns:
@@ -175,7 +182,7 @@ def generate_openai_response_with_history(user_message, emotion, confidence, con
 
 Your role: Help users identify emotional eating patterns, provide healthier coping strategies, and offer encouragement. You remember past conversations and can reference previous discussions to provide personalized support.
 
-IMPORTANT: Use the conversation history, patterns, and learning insights to provide personalized, context-aware responses. Reference previous conversations when relevant, acknowledge patterns you've noticed, and build on past discussions.{history_context}{pattern_context}{learning_context}
+CRITICAL: Use ONLY the actual food logs provided. Do NOT make up or invent food items that the user hasn't actually eaten. If you don't have recent food data, say so honestly rather than guessing.{history_context}{food_context}{pattern_context}{learning_context}
 
 If they mention food/eating: Address the emotional trigger and suggest alternatives.
 If they're celebrating: Suggest non-food ways to celebrate.
@@ -274,6 +281,7 @@ def classify():
         reason = data.get("reason", "")
         conversation_history = data.get("conversation_history", [])
         user_id = data.get("user_id", "")
+        recent_food_logs = data.get("recent_food_logs", [])
 
         if not reason:
             return jsonify({"error": "Missing 'reason' field"}), 400
@@ -303,9 +311,9 @@ def classify():
         if is_practical_nutrition:
             openai_response = generate_practical_response(reason)
         else:
-            # Use context-aware response with conversation history
+            # Use context-aware response with conversation history and actual food logs
             openai_response = generate_openai_response_with_history(
-                reason, emotion, confidence*100, conversation_history, user_id
+                reason, emotion, confidence*100, conversation_history, user_id, recent_food_logs
             )
         
         # Use OpenAI response if successful, otherwise use enhanced fallback
@@ -578,7 +586,7 @@ def generate_insights():
             "summary": [
                 f"Your most frequent emotion was {most_common_emotion}.",
                 f"Emotional eating most often occurred around {common_hour}.",
-                f"You’ve logged emotional eating {total_logs} times.",
+                f"You've logged emotional eating {total_logs} times.",
             ],
             "breakdown": emotion_summary
         }
@@ -681,6 +689,8 @@ class ReinforcementLearning:
         self.success_patterns = defaultdict(dict)  # user_id -> successful strategies
         self.learning_curves = defaultdict(list)  # user_id -> satisfaction scores over time
         self.adaptive_responses = defaultdict(dict)  # user_id -> personalized response templates
+        self.trigger_patterns = defaultdict(dict)  # user_id -> trigger patterns for proactive intervention
+        self.intervention_schedule = defaultdict(list)  # user_id -> scheduled interventions
         
     def record_feedback(self, user_id, message, response, emotion, rating, feedback_text=""):
         """Record user feedback for learning"""
@@ -773,6 +783,8 @@ class ReinforcementLearning:
                 pickle.dump(dict(self.success_patterns), f)
             with open('learning_curves.pkl', 'wb') as f:
                 pickle.dump(dict(self.learning_curves), f)
+            # Save intervention data
+            self.save_intervention_data()
         except Exception as e:
             print(f"Error saving learning data: {e}")
     
@@ -788,8 +800,125 @@ class ReinforcementLearning:
             if os.path.exists('learning_curves.pkl'):
                 with open('learning_curves.pkl', 'rb') as f:
                     self.learning_curves = defaultdict(list, pickle.load(f))
+            if os.path.exists('trigger_patterns.pkl'):
+                with open('trigger_patterns.pkl', 'rb') as f:
+                    self.trigger_patterns = defaultdict(dict, pickle.load(f))
+            if os.path.exists('intervention_schedule.pkl'):
+                with open('intervention_schedule.pkl', 'rb') as f:
+                    self.intervention_schedule = defaultdict(list, pickle.load(f))
         except Exception as e:
             print(f"Error loading learning data: {e}")
+    
+    def analyze_trigger_patterns(self, user_id, conversation_history, food_logs):
+        """Analyze user's trigger patterns for proactive intervention"""
+        try:
+            # Extract trigger patterns from conversation and food logs
+            patterns = {
+                'time_triggers': [],
+                'emotion_triggers': [],
+                'situation_triggers': [],
+                'food_triggers': []
+            }
+            
+            # Analyze time patterns
+            if conversation_history:
+                timestamps = [msg.get('timestamp', '') for msg in conversation_history]
+                hours = [datetime.fromisoformat(ts).hour for ts in timestamps if ts]
+                if hours:
+                    common_hours = Counter(hours).most_common(3)
+                    patterns['time_triggers'] = [f"{hour}:00" for hour, _ in common_hours]
+            
+            # Analyze emotion patterns
+            emotion_keywords = {
+                'stress': ['stressed', 'overwhelmed', 'pressure', 'deadline'],
+                'sadness': ['sad', 'lonely', 'depressed', 'down'],
+                'anger': ['angry', 'frustrated', 'mad', 'irritated'],
+                'anxiety': ['anxious', 'worried', 'nervous', 'fear'],
+                'boredom': ['bored', 'restless', 'nothing to do']
+            }
+            
+            for emotion, keywords in emotion_keywords.items():
+                for msg in conversation_history:
+                    if any(keyword in msg.get('message', '').lower() for keyword in keywords):
+                        if emotion not in patterns['emotion_triggers']:
+                            patterns['emotion_triggers'].append(emotion)
+            
+            # Analyze food triggers from food logs
+            if food_logs:
+                for food_log in food_logs:
+                    emotion = food_log.get('emotion', '').lower()
+                    if emotion in ['sad', 'stressed', 'angry', 'anxious']:
+                        food_item = food_log.get('food', '')
+                        if food_item and food_item not in patterns['food_triggers']:
+                            patterns['food_triggers'].append(food_item)
+            
+            # Save patterns for this user
+            self.trigger_patterns[user_id] = patterns
+            return patterns
+            
+        except Exception as e:
+            print(f"Error analyzing trigger patterns: {e}")
+            return {}
+    
+    def generate_proactive_interventions(self, user_id, patterns):
+        """Generate proactive interventions based on trigger patterns"""
+        interventions = []
+        
+        try:
+            # Time-based interventions
+            for time_trigger in patterns.get('time_triggers', []):
+                intervention = {
+                    'type': 'time_trigger',
+                    'trigger_time': time_trigger,
+                    'message': f"Stress incoming! It's {time_trigger} - your common trigger time. Tap for quick walk video",
+                    'action': 'quick_walk_video',
+                    'priority': 'high'
+                }
+                interventions.append(intervention)
+            
+            # Emotion-based interventions
+            for emotion in patterns.get('emotion_triggers', []):
+                intervention = {
+                    'type': 'emotion_trigger',
+                    'trigger_emotion': emotion,
+                    'message': f"Feeling {emotion}? Remember your healthy alternatives: deep breathing, 5-minute walk, or call a friend",
+                    'action': 'coping_strategies',
+                    'priority': 'medium'
+                }
+                interventions.append(intervention)
+            
+            # Food-based interventions
+            for food_trigger in patterns.get('food_triggers', []):
+                intervention = {
+                    'type': 'food_trigger',
+                    'trigger_food': food_trigger,
+                    'message': f"Craving {food_trigger}? Try the 5-minute rule: wait 5 minutes, then decide if you're truly hungry",
+                    'action': 'mindful_eating',
+                    'priority': 'medium'
+                }
+                interventions.append(intervention)
+            
+            # Save interventions for this user
+            self.intervention_schedule[user_id] = interventions
+            
+        except Exception as e:
+            print(f"Error generating proactive interventions: {e}")
+        
+        return interventions
+    
+    def get_upcoming_interventions(self, user_id):
+        """Get upcoming interventions for a user"""
+        return self.intervention_schedule.get(user_id, [])
+    
+    def save_intervention_data(self):
+        """Save intervention data to pickle files"""
+        try:
+            with open('trigger_patterns.pkl', 'wb') as f:
+                pickle.dump(dict(self.trigger_patterns), f)
+            with open('intervention_schedule.pkl', 'wb') as f:
+                pickle.dump(dict(self.intervention_schedule), f)
+        except Exception as e:
+            print(f"Error saving intervention data: {e}")
 
 # Initialize RL system
 rl_system = ReinforcementLearning()
@@ -934,6 +1063,39 @@ def get_fact_stats():
             "success": True,
             "stats": stats
         })
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+
+
+@app.route("/proactive-interventions/<user_id>", methods=["GET"])
+@limiter.limit("5 per minute")
+def get_proactive_interventions(user_id):
+    """Get proactive interventions for a user based on their patterns"""
+    try:
+        # Get user's trigger patterns
+        patterns = rl_system.trigger_patterns.get(user_id, {})
+        
+        if not patterns:
+            return jsonify({
+                "success": True,
+                "message": "No trigger patterns found yet. Keep using the app to build your intervention profile!",
+                "interventions": []
+            })
+        
+        # Get upcoming interventions
+        interventions = rl_system.get_upcoming_interventions(user_id)
+        
+        return jsonify({
+            "success": True,
+            "user_id": user_id,
+            "trigger_patterns": patterns,
+            "interventions": interventions,
+            "total_interventions": len(interventions)
+        })
+        
     except Exception as e:
         return jsonify({
             "success": False,

@@ -35,8 +35,8 @@ public class DashboardService {
         java.time.LocalDateTime startOfDay = today.atStartOfDay();
         java.time.LocalDateTime endOfDay = today.atTime(23, 59, 59);
         
-        // Count today's food logs
-        long todayFoodLogs = foodLogRepository.countByStudentAndCreatedAtBetween(student, startOfDay, endOfDay);
+        // Count today's food logs (using eating time for today's entries)
+        long todayFoodLogs = foodLogRepository.countByStudentAndEatingTimeBetween(student, startOfDay, endOfDay);
         
         // Count today's coping tool usage
         long todayCopingTools = copingToolUsageRepository.countByStudentAndCreatedAtBetween(student, startOfDay, endOfDay);
@@ -63,7 +63,7 @@ public class DashboardService {
             java.time.LocalDateTime startOfDay = checkDate.atStartOfDay();
             java.time.LocalDateTime endOfDay = checkDate.atTime(23, 59, 59);
             
-            long foodLogsOnDate = foodLogRepository.countByStudentAndCreatedAtBetween(student, startOfDay, endOfDay);
+            long foodLogsOnDate = foodLogRepository.countByStudentAndEatingTimeBetween(student, startOfDay, endOfDay);
             
             if (foodLogsOnDate > 0) {
                 streak++;
