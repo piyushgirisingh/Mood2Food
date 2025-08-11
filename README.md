@@ -56,7 +56,7 @@ An intelligent emotional eating support application that helps users identify th
 
 1. **Clone the repository**
    ```bash
-   git clone <your-repo-url>
+   git clone https://github.com/piyushgirisingh/Mood2Food.git
    cd Mood2Food
    ```
 
@@ -190,23 +190,6 @@ The application uses Flyway migrations for database management:
 - **Insights**: Generated insights and patterns
 - **Coping Tools**: Usage tracking and effectiveness
 
-## 🚀 Deployment
-
-### Railway Deployment (Recommended)
-See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed deployment instructions.
-
-### Docker Deployment
-```bash
-# Build and deploy
-docker-compose -f docker-compose.yml up -d
-
-# View logs
-docker-compose logs -f
-
-# Stop services
-docker-compose down
-```
-
 ## 🧪 Testing
 
 ### API Testing
@@ -247,15 +230,6 @@ cd backend
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🆘 Support
-
-- **Documentation**: Check the [docs](./docs) folder
-- **Issues**: Report bugs via GitHub Issues
-- **Deployment Help**: See [DEPLOYMENT.md](./DEPLOYMENT.md)
 
 ## 🙏 Acknowledgments
 
