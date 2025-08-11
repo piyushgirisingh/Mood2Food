@@ -299,7 +299,9 @@ const Chat = ({ onClose }) => {
                       borderRadius: 3,
                       bgcolor:
                         msg.sender === "user"
-                          ? theme.palette.primary.main
+                          ? theme.palette.mode === 'dark' 
+                            ? theme.palette.primary.dark 
+                            : theme.palette.primary.main
                           : theme.palette.background.paper,
                       color:
                         msg.sender === "user"
@@ -318,7 +320,9 @@ const Chat = ({ onClose }) => {
                           ? {
                               right: -8,
                               borderWidth: "8px 0 8px 8px",
-                              borderColor: `transparent transparent transparent ${theme.palette.primary.main}`,
+                              borderColor: `transparent transparent transparent ${theme.palette.mode === 'dark' 
+                                ? theme.palette.primary.dark 
+                                : theme.palette.primary.main}`,
                             }
                           : {
                               left: -8,
@@ -329,7 +333,15 @@ const Chat = ({ onClose }) => {
                       },
                     }}
                   >
-                    <Typography variant="body1" sx={{ wordBreak: "break-word" }}>
+                    <Typography 
+                      variant="body1" 
+                      sx={{ 
+                        wordBreak: "break-word",
+                        color: msg.sender === "user" ? "#ffffff" : "inherit",
+                        fontWeight: msg.sender === "user" ? 500 : 400,
+                        textShadow: msg.sender === "user" ? "0 1px 2px rgba(0,0,0,0.1)" : "none"
+                      }}
+                    >
                       {msg.text}
                     </Typography>
                     

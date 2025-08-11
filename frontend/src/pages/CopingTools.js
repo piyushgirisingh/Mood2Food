@@ -238,26 +238,7 @@ const CopingTools = () => {
     }
   };
 
-  const handleDownloadPDF = async () => {
-    setDownloading(true);
-    try {
-      const response = await reportsAPI.downloadPDF();
-      const blob = new Blob([response.data], { type: 'application/pdf' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'mood2food_report.pdf';
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-      setSuccess('PDF report downloaded successfully!');
-    } catch (error) {
-      setError('Failed to download PDF report');
-    } finally {
-      setDownloading(false);
-    }
-  };
+
 
   if (toolsLoading) {
     return (
@@ -293,14 +274,6 @@ const CopingTools = () => {
             disabled={downloading}
           >
             Download CSV
-          </Button>
-          <Button
-            variant="outlined"
-            startIcon={<Download />}
-            onClick={handleDownloadPDF}
-            disabled={downloading}
-          >
-            Download PDF
           </Button>
           {onboardingCompleted === false && (
             <Button

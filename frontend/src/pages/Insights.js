@@ -70,6 +70,9 @@ const Insights = () => {
   const [success, setSuccess] = useState("");
   const [selectedTab, setSelectedTab] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedPrompt, setSelectedPrompt] = useState("");
+  const [reflectionText, setReflectionText] = useState("");
+  const [savingReflection, setSavingReflection] = useState(false);
 
   useEffect(() => {
     loadInsights();
@@ -121,6 +124,35 @@ const Insights = () => {
 
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
+  };
+
+  const handlePromptSelect = (prompt) => {
+    setSelectedPrompt(prompt);
+    setReflectionText(""); // Clear previous reflection when selecting new prompt
+  };
+
+  const handleSaveReflection = async () => {
+    if (!selectedPrompt || !reflectionText.trim()) {
+      setError("Please select a prompt and write your reflection");
+      return;
+    }
+
+    setSavingReflection(true);
+    try {
+      // Create a reflection insight
+      const reflectionInsight = `Weekly Reflection - ${selectedPrompt}\n\n${reflectionText}`;
+      await insightAPI.addInsight(reflectionInsight);
+      setSelectedPrompt("");
+      setReflectionText("");
+      setSuccess("Reflection saved successfully!");
+      loadInsights();
+      loadLatestInsight();
+      setTimeout(() => setSuccess(""), 3000);
+    } catch (err) {
+      setError("Failed to save reflection");
+    } finally {
+      setSavingReflection(false);
+    }
   };
 
   // Personal Growth Resources
@@ -525,24 +557,41 @@ const Insights = () => {
                     <Chip
                       key={index}
                       label={prompt}
-                      variant="outlined"
+                      variant={selectedPrompt === prompt ? "filled" : "outlined"}
                       color="primary"
                       size="small"
+                      onClick={() => handlePromptSelect(prompt)}
                       sx={{
                         mb: 1,
+                        cursor: "pointer",
                         "&:hover": {
                           backgroundColor: "rgba(139, 92, 246, 0.1)",
                         },
+                        ...(selectedPrompt === prompt && {
+                          backgroundColor: theme.palette.primary.main,
+                          color: "white",
+                        }),
                       }}
                     />
                   ))}
                 </Box>
 
+                {selectedPrompt && (
+                  <Alert severity="info" sx={{ mb: 2 }}>
+                    <Typography variant="body2">
+                      <strong>Selected Prompt:</strong> {selectedPrompt}
+                    </Typography>
+                  </Alert>
+                )}
+
                 <TextField
                   fullWidth
                   multiline
                   rows={6}
-                  placeholder="Choose a prompt above and write your reflection here..."
+                  value={reflectionText}
+                  onChange={(e) => setReflectionText(e.target.value)}
+                  placeholder={selectedPrompt ? "Write your reflection here..." : "Choose a prompt above and write your reflection here..."}
+                  disabled={!selectedPrompt}
                   sx={{
                     "& .MuiOutlinedInput-root": {
                       backgroundColor: theme.palette.mode === 'dark' ? '#374151' : '#f8fafc',
@@ -556,15 +605,21 @@ const Insights = () => {
                 <Box display="flex" justifyContent="flex-end" mt={2}>
                   <Button
                     variant="contained"
-                    startIcon={<Bookmark />}
+                    startIcon={savingReflection ? <CircularProgress size={20} color="inherit" /> : <Bookmark />}
+                    onClick={handleSaveReflection}
+                    disabled={!selectedPrompt || !reflectionText.trim() || savingReflection}
                     sx={{
                       background:
                         "linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%)",
                       color: "white",
                       fontWeight: 600,
+                      "&:disabled": {
+                        background: "rgba(139, 92, 246, 0.3)",
+                        color: "rgba(255, 255, 255, 0.5)",
+                      },
                     }}
                   >
-                    Save Reflection
+                    {savingReflection ? "Saving..." : "Save Reflection"}
                   </Button>
                 </Box>
               </CardContent>
